@@ -7,7 +7,7 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = ">=3.9, <3.11"
-gepetuto = "^1.0.0"
+gepetuto = "^1.2.0"
 crocoddyl = "^2.0.1"
 matplotlib = "^3.7.2"
 meshcat = "^0.3.2"
