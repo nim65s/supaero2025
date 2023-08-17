@@ -9,11 +9,12 @@ import time
 import numpy as np
 from scipy.optimize import fmin_bfgs
 
-from utils.meshcat_viewer_wrapper import MeshcatVisualizer, planar, translation2d
+from utils.meshcat_viewer_wrapper import MeshcatVisualizer
+from utils.meshcat_viewer_wrapper.transformations import planar, translation2d
 
 # %end_jupyter_snippet
 
-viz = MeshcatVisualizer(url="classical")
+viz = MeshcatVisualizer()  # url="classical"
 
 # %jupyter_snippet create
 viz.addSphere("joint1", 0.1, [1, 0, 0, 1])

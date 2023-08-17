@@ -13,7 +13,7 @@ plt.ion()
 
 # %jupyter_snippet robothand
 robot = RobotHand()
-viz = MeshcatVisualizer(robot, url="classical")
+viz = MeshcatVisualizer(robot)  # , url="classical"
 viz.display(robot.q0)
 # %end_jupyter_snippet
 
