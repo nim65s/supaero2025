@@ -1,8 +1,10 @@
 # Random velocity of the robot driving the movement
-vq = np.array([2., 0, 0, 4., 0, 0])
+vq = np.array([2.0, 0, 0, 4.0, 0, 0])
 
-idx = robot.index('wrist_3_joint')
-o_eff = robot.placement(q, idx).translation  # Position of end-eff wrt world at current configuration
+idx = robot.index("wrist_3_joint")
+o_eff = robot.placement(
+    q, idx
+).translation  # Position of end-eff wrt world at current configuration
 o_ball = q_ball[:3]  # Position of ball wrt world
 eff_ball = o_ball - o_eff  # Position of ball wrt eff
 
