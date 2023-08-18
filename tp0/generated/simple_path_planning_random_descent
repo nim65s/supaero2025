@@ -6,7 +6,7 @@ def randomDescent(q0=None):
     for i in range(100):
         dq = qrand() * 0.1  # Choose a random step ...
         q + dq  # ... apply
-        if dist(q) > dist(q + dq) and not coll(q + dq):  
+        if dist(q) > dist(q + dq) and not coll(q + dq):
             # If distance decrease without collision ...
             q = q + dq  # ... keep the step
             hist.append(q.copy())  # ... keep a trace of it
