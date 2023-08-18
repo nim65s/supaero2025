@@ -69,7 +69,7 @@ def onehot(ix, n=NX):
         [
             [(i == ix) for i in range(n)],
         ],
-        np.float,
+        np.float32,
     )
 
 

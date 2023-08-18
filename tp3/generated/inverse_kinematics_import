@@ -1,8 +1,5 @@
 import pinocchio as pin
-import numpy as np
-import time
-from numpy.linalg import pinv,inv,norm,svd,eig
+from numpy.linalg import norm, pinv
+
 from tp3.tiago_loader import loadTiago
-import matplotlib.pylab as plt
 from utils.meshcat_viewer_wrapper import MeshcatVisualizer
-import unittest

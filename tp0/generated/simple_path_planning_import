@@ -1,8 +1,10 @@
-import pinocchio as pin #the pinocchio library
-from utils.meshcat_viewer_wrapper import MeshcatVisualizer # the meshcat visualiser
-from utils.load_ur5_with_obstacles import load_ur5_with_obstacles,Target # helper function to load scene
-from scipy.optimize import fmin_bfgs,fmin_slsqp # some optimisation routines from scipy
-import time # the remaining libraries are python native
-import numpy as np
-from numpy.linalg import norm
+import time
+
 import matplotlib.pylab as plt
+import numpy as np
+import pinocchio as pin
+from numpy.linalg import norm
+from scipy.optimize import fmin_slsqp
+
+from utils.load_ur5_with_obstacles import Target, load_ur5_with_obstacles
+from utils.meshcat_viewer_wrapper import MeshcatVisualizer

@@ -1,4 +1,3 @@
-# %jupyter_snippet solution_lerp
 import time
 
 import numpy as np
@@ -12,6 +11,3 @@ def change_box_pose_in_viz(viz, quat):
         p = p0 * (1 - t) + p1 * t
         viz.applyConfiguration("world/box", list(p) + list(quat.coeffs()))
         time.sleep(0.01)
-
-
-# %end_jupyter_snippet

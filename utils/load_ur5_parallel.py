@@ -77,5 +77,5 @@ if __name__ == "__main__":
     from utils.meshcat_viewer_wrapper import MeshcatVisualizer
 
     robot = load_ur5_parallel()
-    viz = MeshcatVisualizer(robot, url="classical")
+    viz = MeshcatVisualizer(robot)  # , url="classical"
     viz.display(robot.q0)

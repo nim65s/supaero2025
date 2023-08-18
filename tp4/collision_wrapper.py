@@ -1,6 +1,9 @@
 import numpy as np
 import pinocchio as pin
 
+from tp4.robot_hand import RobotHand
+from utils.meshcat_viewer_wrapper import MeshcatVisualizer
+
 
 class CollisionWrapper:
     def __init__(self, robot, viz=None):
@@ -170,81 +173,75 @@ class CollisionWrapper:
             self.displayContact(ic, r.getContact(0))
 
 
-if __name__ == "__main__":
-    from tp4.robot_hand import RobotHand
-    from utils.meshcat_viewer_wrapper import MeshcatVisualizer
+np.random.seed(3)
 
-    np.random.seed(3)
+robot = RobotHand()
 
-    robot = RobotHand()
+viz = MeshcatVisualizer(robot)  # , url="classical"
 
-    viz = MeshcatVisualizer(robot, url="classical")
+q = robot.q0.copy()
+q[0] = 0.5
+q[2:4] = 1.7648
+viz.display(q)
 
-    q = robot.q0.copy()
-    q[0] = 0.5
-    q[2:4] = 1.7648
-    viz.display(q)
+colwrap = CollisionWrapper(robot, viz)
+colwrap.initDisplay()
+colwrap.createDisplayPatchs(1)
+colwrap.computeCollisions(q)
+cols = colwrap.getCollisionList()
 
-    colwrap = CollisionWrapper(robot, viz)
-    colwrap.initDisplay()
-    colwrap.createDisplayPatchs(1)
+ci = cols[0][2]
+colwrap.displayContact(0, ci.getContact(0))
+
+# %jupyter_snippet collide
+q = robot.q0.copy()
+vq = np.random.rand(robot.model.nv) * 2 - 1
+for i in range(10000):
+    q += vq * 1e-3
     colwrap.computeCollisions(q)
     cols = colwrap.getCollisionList()
-
-    ci = cols[0][2]
-    colwrap.displayContact(0, ci.getContact(0))
-
-    ### Try to find a random contact
-    if 1:
-        # %jupyter_snippet collide
-        q = robot.q0.copy()
-        vq = np.random.rand(robot.model.nv) * 2 - 1
-        for i in range(10000):
-            q += vq * 1e-3
-            colwrap.computeCollisions(q)
-            cols = colwrap.getCollisionList()
-            if len(cols) > 0:
-                break
-            if not i % 20:
-                viz.display(q)
-
+    if len(cols) > 0:
+        break
+    if not i % 20:
         viz.display(q)
-        # %end_jupyter_snippet
 
-        colwrap.displayCollisions()
-        p = cols[0][1]
-        ci = cols[0][2].getContact(0)
-        print(
-            robot.gmodel.geometryObjects[p.first].name,
-            robot.gmodel.geometryObjects[p.second].name,
-        )
-        print(ci.pos)
+viz.display(q)
+# %end_jupyter_snippet
 
-    # Compute the indexes of the joints of the subtree where the collision occured
-    i, p, r = cols[0]
-    j1 = colwrap.gmodel.geometryObjects[p.first].parentJoint
-    j2 = colwrap.gmodel.geometryObjects[p.second].parentJoint
-    chain = [j1, j2]
-    while j1 != j2:
-        if j1 < j2:
-            j2 = colwrap.rmodel.parents[j2]
-            chain.append(j2)
-        else:
-            j1 = colwrap.rmodel.parents[j1]
-            chain.append(j1)
-    # Take uniq indexes, ordered, and discart the first joint (common root)
-    # to the collision tree.
-    chain = list(set(chain))[1:]
-    idx_qs = [robot.model.joints[i].idx_v for i in chain]
-    idx_nqs = [i for i in range(robot.model.nv) if i not in idx_qs]
+colwrap.displayCollisions()
+p = cols[0][1]
+ci = cols[0][2].getContact(0)
+print(
+    robot.gmodel.geometryObjects[p.first].name,
+    robot.gmodel.geometryObjects[p.second].name,
+)
+print(ci.pos)
 
-    dist = colwrap.getCollisionDistances()
-    J = colwrap.getCollisionJacobian()
+# Compute the indexes of the joints of the subtree where the collision occured
+i, p, r = cols[0]
+j1 = colwrap.gmodel.geometryObjects[p.first].parentJoint
+j2 = colwrap.gmodel.geometryObjects[p.second].parentJoint
+chain = [j1, j2]
+while j1 != j2:
+    if j1 < j2:
+        j2 = colwrap.rmodel.parents[j2]
+        chain.append(j2)
+    else:
+        j1 = colwrap.rmodel.parents[j1]
+        chain.append(j1)
+# Take uniq indexes, ordered, and discart the first joint (common root)
+# to the collision tree.
+chain = list(set(chain))[1:]
+idx_qs = [robot.model.joints[i].idx_v for i in chain]
+idx_nqs = [i for i in range(robot.model.nv) if i not in idx_qs]
 
-    #
-    assert J.shape == (1, robot.model.nv)
-    assert np.linalg.norm(J) > 0
-    assert np.allclose(J[0, idx_nqs], 0)
+dist = colwrap.getCollisionDistances()
+J = colwrap.getCollisionJacobian()
 
-    ### TODO Test: the assert could be tried several times with random vq
-    ### TODO: add finite diff test.
+#
+assert J.shape == (1, robot.model.nv)
+assert np.linalg.norm(J) > 0
+assert np.allclose(J[0, idx_nqs], 0)
+
+### TODO Test: the assert could be tried several times with random vq
+### TODO: add finite diff test.

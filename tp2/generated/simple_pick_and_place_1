@@ -1,1 +1,1 @@
-robot = robex.load('ur5')
+robot = robex.load("ur5")

@@ -10,9 +10,10 @@ import numpy as np
 from numpy.linalg import norm
 from scipy.optimize import fmin_bfgs, fmin_slsqp
 
-from utils.meshcat_viewer_wrapper import MeshcatVisualizer, planar, translation2d
+from utils.meshcat_viewer_wrapper import MeshcatVisualizer
+from utils.meshcat_viewer_wrapper.transformations import planar, translation2d
 
-viz = MeshcatVisualizer(url="classical")
+viz = MeshcatVisualizer()  # url="classical"
 
 viz.addSphere("joint1", 0.1, [1, 0, 0, 1])
 viz.addSphere("joint2", 0.1, [1, 0, 0, 1])
