@@ -1,9 +1,16 @@
 [tool.poetry]
 name = "supaero2023"
 version = "0.1.0"
-description = ""
-authors = ["Your Name <you@example.com>"]
+description = "Pinocchio tutorials"
+authors = [
+  "Guilhem Saurel <guilhem.saurel@laas.fr>",
+  "Nicolas Mansard <nmansard@laas.fr>",
+  "Théo Martinez <tmartinezf@laas.fr>"
+]
+homepage = "https://github.com/Gepetto/supaero2023"
+license = "BSD-2-Clause"
 readme = "README.md"
+
 
 [tool.poetry.dependencies]
 python = ">=3.9, <3.11"

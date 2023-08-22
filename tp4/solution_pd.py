@@ -6,8 +6,8 @@ import numpy as np
 import pinocchio as pin
 from numpy.linalg import inv, norm
 
+from supaero2023.meshcat_viewer_wrapper import MeshcatVisualizer
 from tp4.robot_hand import RobotHand
-from utils.meshcat_viewer_wrapper import MeshcatVisualizer
 
 plt.ion()
 

@@ -5,7 +5,7 @@ import numpy as np
 from numpy.linalg import norm
 from pinocchio import SE3, AngleAxis, Quaternion
 
-from utils.meshcat_viewer_wrapper import MeshcatVisualizer
+from supaero2023.meshcat_viewer_wrapper import MeshcatVisualizer
 
 viz = MeshcatVisualizer()
 
