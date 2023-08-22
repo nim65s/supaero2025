@@ -1,6 +1,6 @@
 import doctest
 
-from utils import load_ur5_parallel
+from supaero2023 import load_ur5_parallel
 
 
 def load_tests(loader, tests, pattern):

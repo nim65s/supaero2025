@@ -7,8 +7,8 @@ import pinocchio as pin
 from numpy.linalg import norm
 from scipy.optimize import fmin_slsqp
 
-from utils.load_ur5_with_obstacles import Target, load_ur5_with_obstacles
-from utils.meshcat_viewer_wrapper import MeshcatVisualizer
+from supaero2023.load_ur5_with_obstacles import Target, load_ur5_with_obstacles
+from supaero2023.meshcat_viewer_wrapper import MeshcatVisualizer
 
 # %end_jupyter_snippet
 plt.ion()  # matplotlib with interactive setting

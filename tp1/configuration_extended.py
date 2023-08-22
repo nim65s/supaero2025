@@ -10,8 +10,8 @@ import numpy as np
 from numpy.linalg import norm
 from scipy.optimize import fmin_bfgs, fmin_slsqp
 
-from utils.meshcat_viewer_wrapper import MeshcatVisualizer
-from utils.meshcat_viewer_wrapper.transformations import planar, translation2d
+from supaero2023.meshcat_viewer_wrapper import MeshcatVisualizer
+from supaero2023.meshcat_viewer_wrapper.transformations import planar, translation2d
 
 viz = MeshcatVisualizer()  # url="classical"
 

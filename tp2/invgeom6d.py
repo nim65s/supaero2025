@@ -16,7 +16,7 @@ import pinocchio as pin
 from numpy.linalg import norm
 from scipy.optimize import fmin_bfgs
 
-from utils.meshcat_viewer_wrapper import MeshcatVisualizer
+from supaero2023.meshcat_viewer_wrapper import MeshcatVisualizer
 
 # --- Load robot model
 robot = robex.load("ur5")

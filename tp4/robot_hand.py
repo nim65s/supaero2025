@@ -513,7 +513,7 @@ if __name__ == "__main__":
 if __name__ == "__main__":
     import time
 
-    from utils.meshcat_viewer_wrapper import MeshcatVisualizer
+    from supaero2023.meshcat_viewer_wrapper import MeshcatVisualizer
 
     robot = RobotHand()
 
