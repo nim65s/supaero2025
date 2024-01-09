@@ -4,7 +4,7 @@ RUN useradd -m user
 USER user
 WORKDIR /home/user/tp
 ENV PATH /home/user/.local/bin:$PATH
-CMD jupyter notebook --no-browser --ip='*'
+CMD jupyter lab --no-browser --ip='*'
 
 ADD --chown=user requirements.txt .
 RUN --mount=type=cache,sharing=locked,uid=1000,gid=1000,target=/home/user/.cache \
