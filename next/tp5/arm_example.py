@@ -34,7 +34,7 @@ goal = np.array([0.2, 0.5, 0.5])
 
 # Configure viewer
 # %jupyter_snippet viz
-from supaero2023.meshcat_viewer_wrapper import MeshcatVisualizer  # noqa E402
+from supaero2024.meshcat_viewer_wrapper import MeshcatVisualizer  # noqa E402
 
 viz = MeshcatVisualizer(robot)
 viz.display(robot_model.q0)

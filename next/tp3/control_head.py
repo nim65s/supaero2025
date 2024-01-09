@@ -13,7 +13,7 @@ import numpy as np
 import pinocchio as pin
 from numpy.linalg import norm, pinv
 
-from supaero2023.meshcat_viewer_wrapper import MeshcatVisualizer
+from supaero2024.meshcat_viewer_wrapper import MeshcatVisualizer
 from tp3.tiago_loader import loadTiago
 
 plt.ion()

@@ -192,7 +192,7 @@ class TiagoTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    from supaero2023.meshcat_viewer_wrapper import MeshcatVisualizer
+    from supaero2024.meshcat_viewer_wrapper import MeshcatVisualizer
 
     robot = loadTiago()
     viz = MeshcatVisualizer(robot)

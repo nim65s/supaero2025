@@ -1,6 +1,6 @@
 import example_robot_data as robex
 
-from supaero2023.meshcat_viewer_wrapper import MeshcatVisualizer
+from supaero2024.meshcat_viewer_wrapper import MeshcatVisualizer
 
 ROBOT_NAME = "solo12"
 # ROBOT_NAME = 'ur5'

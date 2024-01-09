@@ -9,8 +9,8 @@ import time
 import numpy as np
 from scipy.optimize import fmin_bfgs
 
-from supaero2023.meshcat_viewer_wrapper import MeshcatVisualizer
-from supaero2023.meshcat_viewer_wrapper.transformations import planar, translation2d
+from supaero2024.meshcat_viewer_wrapper import MeshcatVisualizer
+from supaero2024.meshcat_viewer_wrapper.transformations import planar, translation2d
 
 # %end_jupyter_snippet
 

@@ -1,14 +1,14 @@
 [tool.poetry]
-name = "supaero2023"
+name = "supaero2024"
 version = "0.1.0"
-description = "Pinocchio tutorials"
+description = "Gepetto tutorials, for Pinocchio and Crocoddyl, version for Supaero 2024 class"
 authors = [
   "Guilhem Saurel <guilhem.saurel@laas.fr>",
   "Nicolas Mansard <nmansard@laas.fr>",
   "Théo Martinez <tmartinezf@laas.fr>"
 ]
-homepage = "https://github.com/Gepetto/supaero2023"
-license = "BSD-2-Clause"
+homepage = "https://github.com/Gepetto/supaero2024"
+license = "BSD-3-Clause"
 readme = "README.md"
 
 
