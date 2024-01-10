@@ -60,10 +60,6 @@ On a native installation, just go in the folder containing the tutorials and exe
 
 With a docker, execute the following:
 ```bash
-docker run --rm -v data:/home/user/tp -it gepetto/supaero git remote set-url origin https://github.com/gepetto/supaero2024
-```
-Then
-```bash
 docker run --rm -v data:/home/user/tp -it gepetto/supaero git pull --rebase origin main
 ```
 
