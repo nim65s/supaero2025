@@ -22,6 +22,7 @@ meshcat = "^0.3.2"
 scipy = "^1.11.4"
 #tensorflow = "^2.13.0"
 proxsuite = "^0.6.1"
+jupyterlab = "^4.0.10"
 
 [tool.isort]
 profile = "black"
