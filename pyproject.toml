@@ -8,12 +8,12 @@ authors = [
   "Théo Martinez <tmartinezf@laas.fr>"
 ]
 homepage = "https://github.com/Gepetto/supaero2024"
-license = "BSD-3-Clause"
+license = "BSD-2-Clause"
 readme = "README.md"
 
 
 [tool.poetry.dependencies]
-python = ">=3.9, <3.11"
+python = ">=3.8, <3.13"
 gepetuto = "^1.2.0"
 crocoddyl = "^2.0.1"
 matplotlib = "^3.7.2"
