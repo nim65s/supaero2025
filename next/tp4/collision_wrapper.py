@@ -1,8 +1,8 @@
 import numpy as np
 import pinocchio as pin
+from tp4.robot_hand import RobotHand
 
 from supaero2024.meshcat_viewer_wrapper import MeshcatVisualizer
-from tp4.robot_hand import RobotHand
 
 
 class CollisionWrapper:
