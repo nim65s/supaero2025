@@ -8,14 +8,22 @@ The notebooks are in Python and based on the software [Pinocchio](https://github
 
 ### Default setup
 
+This setup should work on Linux / MacOS / WSL2.
+
 You **must** use a [virtualenv](https://docs.python.org/3/library/venv.html) or a similar.
 
-For example on ubuntu, you can get started with:
+For example on Debian/Ubuntu, you can get started with:
 ```bash
-sudo apt install python3-pip python3-venv
+sudo apt install python-is-python3 python3-pip python3-venv
 ```
 
-Once in your virtual environment, install this package:
+To create a virtual environment and activate it:
+```bash
+python -m venv .venv
+source .venv/bin/activate
+```
+
+**Once in your virtual environment**, install this package:
 ```bash
 pip install -U pip
 pip install .
@@ -25,7 +33,7 @@ After that, you can start the server with `jupyter notebook`
 
 ### Docker
 
-If the default setup is not working for you, you can use the virtualization provided by Docker. A Docker image is provided, and can be started with:
+If the default setup is not working for you, as a backup solution, a Docker image is provided, and can be started with:
 
 ```bash
 docker run --rm -p 7000:7000 -p 7001:7001 -p 7002:7002 -p 7003:7003 -p 7004:7004 -p 8888:8888 -v data:/home/user/tp -it gepetto/supaero2024
@@ -41,6 +49,8 @@ In case of big update, you must update the docker:
 ```bash
 docker pull gepetto/supaero2024
 ```
+
+## Use
 
 ### Update the notebooks
 
@@ -75,15 +85,15 @@ sudo usermod -aG docker nmansard
 newgrp docker
 ```
 
-# Join me on \[Matrix\]
+## Join me on \[Matrix\]
 
 [\[Matrix\]](https://matrix.org/) is a distributed chat system that will be used during the class. Consider [creating
 an account](https://app.element.io/#/register) and join [the classroom
 channel](https://matrix.to/#/#supaero-robotics-2024:laas.fr).
 
-# Set up of the system ... for admin only
+## Set up of the system ... for admin only
 
-## Build and push the docker
+### Build and push the docker
 
 Build the docker as specified in Dockerfile. You need the buildkit for that. The following file +/etc/docker/deamon_json+ should contain:
 ```json
