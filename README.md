@@ -58,6 +58,7 @@ If the repository changes (for example when new tutorials are pushes), you need 
 version by "pulling" it from the repository.
 On a native installation, just go in the folder containing the tutorials and execute `git pull`
 
+
 With a docker, execute the following:
 ```bash
 docker run --rm -v data:/home/user/tp -it gepetto/supaero git pull --rebase origin main
@@ -65,6 +66,7 @@ docker run --rm -v data:/home/user/tp -it gepetto/supaero git pull --rebase orig
 
 To avoid conflict when pulling a new version, you should better do your modifications in copy of the original files,
 not directly in the original files itself.
+We then strongly suggest that you don't work on the notebooks directly, but on a copy of it (save 0-introduction_to_numerical_robotics.ipynb into something like 0_mycopy.ipynb before working on it).
 
 ## Side notes
 
