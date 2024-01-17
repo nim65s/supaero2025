@@ -1,3 +1,12 @@
+"""
+Example of forward geometry: the robot is moved along an arbitrary trajectory
+(computed with ad-hoc sinus waves) and at each time step, the end effector
+position is computed; a 3d object is then placed at this position, displaying
+a rigid constraints between the robot effector and the object. Then the same
+is done with the placement of the end effector, to which a purple brick is
+attached.
+"""
+
 import math
 import time
 import unittest
@@ -31,6 +40,9 @@ viz.applyConfiguration(ballID, q_ball)
 #
 # PICK #############################################################
 #
+# First choose a robot configuration where the end-effector is
+# touching the sphere object. The angles of the robot are manually
+# tuned to obtain the contact.
 
 # Configuration for picking the box
 # %jupyter_snippet 3
@@ -50,6 +62,10 @@ print("The robot is display with end effector on the red ball.")
 #
 # MOVE 3D #############################################################
 #
+# Then move the robot along an arbitrary trajectory and position (3d)
+# the external spherical object so that it keeps the same rigid position
+# with respect to the end effector, hence displaying a rigid 3d constraint.
+
 
 print("Let's start the movement ...")
 
@@ -81,6 +97,9 @@ for i in range(50):
 #
 # MOVE 6D #############################################################
 #
+# Finally, compute the placement of the end effector and properly place
+# a non-spherical object, hence displaying a rigid 6d constraint when
+# the robot moves.
 
 q = q0.copy()
 viz.display(q0)
