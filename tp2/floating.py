@@ -1,10 +1,12 @@
 """
-Stand-alone inverse geom in 3D.  Given a reference translation <target> ,
-it computes the configuration of the UR5 so that the end-effector position (3D)
-matches the target. This is done using BFGS solver. While iterating to compute
-the optimal configuration, the script also display the successive candidate
-solution, hence moving the robot from the initial guess configuaration to the
-reference target.
+Variation of the invgeom3d.py example, using a floating robot.
+This test exhibits that the quaternion should be kept of norm=1
+when computing the robot configuration. Otherwise, a nonunit quaternion
+does not correspond to any meaningful rotation. Here the viewer tends
+to interpret this nonunit quaternion as the composition of a rotation
+and a nonhomogeneous scaling, leading to absurd 3d display.
+When the quaternion is explicitly kept of norm 1, everything works
+fine and similarly to the unconstrained case.
 """
 
 import time
@@ -19,6 +21,10 @@ from scipy.optimize import fmin_bfgs
 from supaero2024.meshcat_viewer_wrapper import MeshcatVisualizer
 
 # --- Load robot model
+# Solo12 is a quadruped robot. Its configuration is composed of:
+# - 3 first coefficients are the translation of the basis
+# - 4 next coefficients are the quaternion representing the rotation of the basis
+# - then each leg has a configuration of dimension 3 (hip roll and pitch, knee pitch).
 robot = robex.load("solo12")
 NQ = robot.model.nq
 NV = robot.model.nv
@@ -34,6 +40,7 @@ robot.feetIndexes = [
 ]
 
 # --- Add box to represent target
+# We define 4 targets, one for each leg.
 colors = ["red", "blue", "green", "magenta"]
 for color in colors:
     viz.addSphere("world/%s" % color, 0.05, color)
@@ -54,7 +61,10 @@ for i in range(4):
 
 
 def cost(q):
-    """Compute score from a configuration"""
+    """
+    Compute score from a configuration: sum of the 4 reaching
+    tasks, one for each leg.
+    """
     cost = 0.0
     for i in range(4):
         p_i = robot.framePlacement(q, robot.feetIndexes[i]).translation
@@ -63,8 +73,11 @@ def cost(q):
 
 
 def callback(q):
-    viz.applyConfiguration("world/box", Mtarget)
-
+    """
+    Diplay the robot, postion a ball of different color for
+    each foot, and the same ball of same color for the location
+    of the corresponding target.
+    """
     for i in range(4):
         p_i = robot.framePlacement(q, robot.feetIndexes[i])
         viz.applyConfiguration("world/%s" % colors[i], p_i)
@@ -75,8 +88,6 @@ def callback(q):
     viz.display(q)
     time.sleep(1e-2)
 
-
-Mtarget = pin.SE3(pin.utils.rotate("x", 3.14 / 4), np.array([0.5, 0.1, 0.2]))  # x,y,z
 qopt = fmin_bfgs(cost, robot.q0, callback=callback)
 # %end_jupyter_snippet
 

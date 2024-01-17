@@ -1,6 +1,7 @@
 """
-Stand-alone inverse geom in 3D.  Given a reference translation <target> ,
-it computes the configuration of the UR5 so that the end-effector position (3D)
+Stand-alone inverse geom in 6D (controlling the placement, ie translation and 
+orientation of the end effector).  Given a reference placement <Mtarget> ,
+it computes the configuration of the UR5 so that the end-effector placement (6D)
 matches the target. This is done using BFGS solver. While iterating to compute
 the optimal configuration, the script also display the successive candidate
 solution, hence moving the robot from the initial guess configuaration to the

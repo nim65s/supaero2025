@@ -4,6 +4,7 @@ robot.feetIndexes = [
 ]
 
 # --- Add box to represent target
+# We define 4 targets, one for each leg.
 colors = ["red", "blue", "green", "magenta"]
 for color in colors:
     viz.addSphere("world/%s" % color, 0.05, color)
@@ -24,7 +25,10 @@ for i in range(4):
 
 
 def cost(q):
-    """Compute score from a configuration"""
+    """
+    Compute score from a configuration: sum of the 4 reaching
+    tasks, one for each leg.
+    """
     cost = 0.0
     for i in range(4):
         p_i = robot.framePlacement(q, robot.feetIndexes[i]).translation
@@ -33,8 +37,11 @@ def cost(q):
 
 
 def callback(q):
-    viz.applyConfiguration("world/box", Mtarget)
-
+    """
+    Diplay the robot, postion a ball of different color for
+    each foot, and the same ball of same color for the location
+    of the corresponding target.
+    """
     for i in range(4):
         p_i = robot.framePlacement(q, robot.feetIndexes[i])
         viz.applyConfiguration("world/%s" % colors[i], p_i)
@@ -45,6 +52,4 @@ def callback(q):
     viz.display(q)
     time.sleep(1e-2)
 
-
-Mtarget = pin.SE3(pin.utils.rotate("x", 3.14 / 4), np.array([0.5, 0.1, 0.2]))  # x,y,z
 qopt = fmin_bfgs(cost, robot.q0, callback=callback)

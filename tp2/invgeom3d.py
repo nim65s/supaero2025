@@ -1,5 +1,5 @@
 """
-Stand-alone inverse geom in 3D.  Given a reference translation <target> ,
+Stand-alone inverse geom in 3D (translation only). Given a reference translation <target>,
 it computes the configuration of the UR5 so that the end-effector position (3D)
 matches the target. This is done using BFGS solver. While iterating to compute
 the optimal configuration, the script also display the successive candidate
