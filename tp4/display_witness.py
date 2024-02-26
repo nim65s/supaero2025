@@ -119,7 +119,7 @@ if __name__ == "__main__":
     # Example of use: move 3 bodies and display the collision/distance witnesses.
     
     import time
-    from utils.meshcat_viewer_wrapper import MeshcatVisualizer
+    from supaero2024.meshcat_viewer_wrapper import MeshcatVisualizer
     from scenes import buildSceneThreeBodies
     import random
 
