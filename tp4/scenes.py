@@ -2,7 +2,7 @@ import pinocchio as pin
 import hppfcl
 import numpy as np
 import random
-from utils.hppfcl_utils import load_hppfcl_convex_from_stl_file
+from supaero2024.hppfcl_utils import load_hppfcl_convex_from_stl_file
 import unittest
 
 def buildScenePillsBox(nobj=30,wall_size=4.0,seed=0,no_walls=False,one_of_each=False):
@@ -34,7 +34,7 @@ def buildScenePillsBox(nobj=30,wall_size=4.0,seed=0,no_walls=False,one_of_each=F
     shapes = [
         hppfcl.Ellipsoid(0.05, 0.15, 0.2),
         hppfcl.Capsule(0.1, 0.2),
-        load_hppfcl_convex_from_stl_file("./assets/mesh.stl")
+        load_hppfcl_convex_from_stl_file("supaero2024/share/mesh.stl")
     ]
     for s in shapes: s.computeLocalAABB()
 
@@ -57,7 +57,13 @@ def buildScenePillsBox(nobj=30,wall_size=4.0,seed=0,no_walls=False,one_of_each=F
         color[-1] = 1
         # Place the object so that it is centered
         Mcenter = pin.SE3(np.eye(3),-shape.computeCOM())
-        geom = pin.GeometryObject( f"{str(type(shape))[22:-2]}_{jid}", jid,jid, Mcenter,shape)
+        if pin.__version__[:3] == '2.7':
+            geom = pin.GeometryObject( f"{str(type(shape))[22:-2]}_{jid}", jid,shape,Mcenter)
+        elif pin.__version__[:4] == '2.99':
+            geom = pin.GeometryObject( f"{str(type(shape))[22:-2]}_{jid}", jid,Mcenter,shape)
+        else:
+            assert(False and 'Specify the API of GeometryObject for your pinocchio version')
+            
         geom.meshColor = np.array(color)
         geom_model.addGeometryObject(geom)
         # Add inertia
@@ -92,7 +98,12 @@ def addFloor(geom_model,altitude=0,addCollisionPairs=True,color=np.array([0.9, 0
     shape = hppfcl.Halfspace( np.array([0,0,1.]),0)
     M = pin.SE3.Identity()
     M.translation[2] = altitude
-    floor = pin.GeometryObject("floor", 0, 0, M, shape)
+    if pin.__version__[:3] == '2.7':
+        floor = pin.GeometryObject("floor", 0, 0, shape, M)
+    elif pin.__version__[:4] == '2.99':
+        floor = pin.GeometryObject("floor", 0, 0, M, shape)
+    else:
+        assert(False and 'Specify the API of GeometryObject for your pinocchio version')
     floor.meshColor = color
     ifloor = geom_model.addGeometryObject(floor)
 
@@ -120,7 +131,12 @@ def addBox(geom_model,wall_size=4.0,color=np.array([1,1,1,0.2]),transparency=Non
     M = pin.SE3.Identity()
     M.translation = np.array([-WALL_SIZE-WALL_THICKNESS, 0., 0.])/2
     shape = hppfcl.Box(WALL_THICKNESS, WALL_SIZE, WALL_SIZE)
-    geom = pin.GeometryObject( f"wall_X-", 0,0, M, shape)
+    if pin.__version__[:3] == '2.7':
+        geom = pin.GeometryObject( f"wall_X-", 0,0, shape, M)
+    elif pin.__version__[:4] == '2.99':
+        geom = pin.GeometryObject( f"wall_X-", 0,0, M, shape)
+    else:
+        assert(False and 'Specify the API of GeometryObject for your pinocchio version')
     geom.meshColor = np.array(wall_color)
     geom_model.addGeometryObject(geom)
 
@@ -128,7 +144,12 @@ def addBox(geom_model,wall_size=4.0,color=np.array([1,1,1,0.2]),transparency=Non
     M = pin.SE3.Identity()
     M.translation = np.array([WALL_SIZE, 0., 0.])/2
     shape = hppfcl.Box(WALL_THICKNESS, WALL_SIZE, WALL_SIZE)
-    geom = pin.GeometryObject( f"wall_X+", 0,0, M, shape)
+    if pin.__version__[:3] == '2.7':
+        geom = pin.GeometryObject( f"wall_X+", 0,0, shape, M)
+    elif pin.__version__[:4] == '2.99':
+        geom = pin.GeometryObject( f"wall_X+", 0,0, M, shape)
+    else:
+        assert(False and 'Specify the API of GeometryObject for your pinocchio version')
     geom.meshColor = np.array(wall_color)
     geom_model.addGeometryObject(geom)
 
@@ -136,14 +157,24 @@ def addBox(geom_model,wall_size=4.0,color=np.array([1,1,1,0.2]),transparency=Non
     M = pin.SE3.Identity()
     M.translation = np.array([0., -WALL_SIZE, 0.])/2
     shape = hppfcl.Box(WALL_SIZE, WALL_THICKNESS, WALL_SIZE)
-    geom = pin.GeometryObject( f"wall_Y-", 0,0, M, shape)
+    if pin.__version__[:3] == '2.7':
+        geom = pin.GeometryObject( f"wall_Y-", 0,0, shape,M)
+    elif pin.__version__[:4] == '2.99':
+        geom = pin.GeometryObject( f"wall_Y-", 0,0, M, shape)
+    else:
+        assert(False and 'Specify the API of GeometryObject for your pinocchio version')
     geom.meshColor = np.array(wall_color)
     geom_model.addGeometryObject(geom)
 
     M = pin.SE3.Identity()
     M.translation = np.array([0., WALL_SIZE, 0.])/2
     shape = hppfcl.Box(WALL_SIZE, WALL_THICKNESS, WALL_SIZE)
-    geom = pin.GeometryObject( f"wall_Y+", 0,0, M, shape)
+    if pin.__version__[:3] == '2.7':
+        geom = pin.GeometryObject( f"wall_Y+", 0,0, shape,M)
+    elif pin.__version__[:4] == '2.99':
+        geom = pin.GeometryObject( f"wall_Y+", 0,0, M, shape)
+    else:
+        assert(False and 'Specify the API of GeometryObject for your pinocchio version')
     geom.meshColor = np.array(wall_color)
     geom_model.addGeometryObject(geom)
 
@@ -151,14 +182,24 @@ def addBox(geom_model,wall_size=4.0,color=np.array([1,1,1,0.2]),transparency=Non
     M = pin.SE3.Identity()
     M.translation = np.array([0., 0., -WALL_SIZE])/2
     shape = hppfcl.Box(WALL_SIZE, WALL_SIZE, WALL_THICKNESS)
-    geom = pin.GeometryObject( f"wall_Z-", 0,0, M, shape)
+    if pin.__version__[:3] == '2.7':
+        geom = pin.GeometryObject( f"wall_Z-", 0,0, shape,M)
+    elif pin.__version__[:4] == '2.99':
+        geom = pin.GeometryObject( f"wall_Z-", 0,0, M, shape)
+    else:
+        assert(False and 'Specify the API of GeometryObject for your pinocchio version')
     geom.meshColor = np.array(wall_color)
     geom_model.addGeometryObject(geom)
 
     M = pin.SE3.Identity()
     M.translation = np.array([0., 0., WALL_SIZE])/2
     shape = hppfcl.Box(WALL_SIZE, WALL_SIZE, WALL_THICKNESS)
-    geom = pin.GeometryObject( f"wall_Z+", 0,0, M, shape)
+    if pin.__version__[:3] == '2.7':
+        geom = pin.GeometryObject( f"wall_Z+", 0,0, shape,M)
+    elif pin.__version__[:4] == '2.99':
+        geom = pin.GeometryObject( f"wall_Z+", 0,0, M, shape)
+    else:
+        assert(False and 'Specify the API of GeometryObject for your pinocchio version')
     geom.meshColor = np.array(wall_color)
     geom_model.addGeometryObject(geom)
 
@@ -236,10 +277,19 @@ def buildCubes(number_of_cubes,sizes=0.2, masses=1.0,
 
         # Add cube visual
         shape = hppfcl.Box(size,size,size)
-        geom_box = pin.GeometryObject(
-            CUBE_TEMPLATE_NAME.format(n_cube=n_cube), jointCube, jointCube,
-            pin.SE3.Identity(), shape
-        )
+        if pin.__version__[:3] == '2.7':
+            geom_box = pin.GeometryObject(
+                CUBE_TEMPLATE_NAME.format(n_cube=n_cube), jointCube, jointCube,
+                shape, pin.SE3.Identity()
+            )
+        elif pin.__version__[:4] == '2.99':
+            geom_box = pin.GeometryObject(
+                CUBE_TEMPLATE_NAME.format(n_cube=n_cube), jointCube, jointCube,
+                pin.SE3.Identity(), shape
+            )
+        else:
+            assert(False and 'Specify the API of GeometryObject for your pinocchio version')
+
         geom_box.meshColor = CUBE_COLOR
         box_id = geom_model.addGeometryObject(geom_box)  # only for visualisation
 
@@ -255,7 +305,12 @@ def buildCubes(number_of_cubes,sizes=0.2, masses=1.0,
         for n_sphere,trans in enumerate(corners):
             M.translation = trans
             name = SPHERE_TEMPLATE_NAME.format(n_cube=n_cube,n_sphere=n_sphere)
-            geom_ball1 = pin.GeometryObject(name, jointCube, jointCube, M, shape)
+            if pin.__version__[:3] == '2.7':
+                geom_ball1 = pin.GeometryObject(name, jointCube, jointCube, shape, M)
+            elif pin.__version__[:4] == '2.99':
+                geom_ball1 = pin.GeometryObject(name, jointCube, jointCube, M, shape)
+            else:
+                assert(False and 'Specify the API of GeometryObject for your pinocchio version')
             geom_ball1.meshColor = SPHERE_COLOR
             ball1_id = geom_model.addGeometryObject(geom_ball1)
 
@@ -349,7 +404,7 @@ class MyTest(unittest.TestCase):
         assert( len(gmodel.collisionPairs ) == 6 )
 
 if __name__ == "__main__":
-    from utils.meshcat_viewer_wrapper import MeshcatVisualizer
+    from supaero2024.meshcat_viewer_wrapper import MeshcatVisualizer
     import time
     
     model,geom_model = buildScenePillsBox(seed=2,nobj=29,no_walls=True,one_of_each=True)
