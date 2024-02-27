@@ -10,7 +10,7 @@ objects are kept in meshcat to avoid additional meshcat-internal burdens.
 import pinocchio as pin
 import hppfcl
 import numpy as np
-from tp4.compatibility import hppfcl_normals,HPPFCL3X
+from tp4.compatibility import HPPFCL3X
 
 class DisplayCollisionWitnessesInMeshcat:
     def __init__(self,viz,point_radius=0.01,linewidth=.1):
@@ -82,17 +82,19 @@ class DisplayCollisionWitnessesInMeshcat:
         self.viz.applyConfiguration(n,self.lineTransfo)
  
     def displayCollisions(self,geom_data):
-        assert(HPPFCL3X) # Only for 3x versions
+        #assert(HPPFCL3X) # Only for 3x versions
         self.resetMeshcatObjects(sum([ r.numContacts() for r in geom_data.collisionResults]))
         idx_col = 0
         for collId,r in enumerate(geom_data.collisionResults):
             if r.numContacts()==0: continue
             for c in r.getContacts():
                 assert(idx_col<self.nwitnesses)
-                self._displayOnePair(idx_col,
-                                     c.getNearestPoint1(),
-                                     c.getNearestPoint2(),
-                                     hppfcl_normals(c.normal))
+                if HPPFCL3X:
+                    p1 = c.getNearestPoint1()
+                    p2 = c.getNearestPoint2()
+                else:
+                    p1 = p2 = c.pos
+                self._displayOnePair(idx_col,p1,p2,c.normal)
                 idx_col += 1
 
     def displayDistances(self,geom_data):
@@ -103,6 +105,6 @@ class DisplayCollisionWitnessesInMeshcat:
             self._displayOnePair(idx_col,
                                  r.getNearestPoint1(),
                                  r.getNearestPoint2(),
-                                 hppfcl_normals(r.normal),r.min_distance)
+                                 r.normal,r.min_distance)
             idx_col += 1
 

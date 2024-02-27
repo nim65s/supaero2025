@@ -48,7 +48,7 @@ for t in range(100):
     time.sleep(.01)
 # %end_jupyter_snippet
 
-if HPPFCL3X: # This feature is only implemented with HPPFCL3X
+#if HPPFCL3X: # This feature is only implemented with HPPFCL3X
     # %jupyter_snippet distance
     # You can similarly display the witnesses based on distance computation.
     # But if you want to have witnesses when object as far to each other, you
