@@ -12,6 +12,9 @@ import numpy as np
 P3X = pin.__version__.split('.')[1] == '99'
 HPPFCL3X = hppfcl.__version__.split('.')[1] == '99'
 
+P3X = [int(n) for n in pin.__version__.split('.') ] >= [2,99]
+HPPFCL3X = [int(n) for n in hppfcl.__version__.split('.') ] >= [2,99]
+
 # -------------------------------------------------------------------------------
 if not P3X:
     pin.ZAxis = np.array([0,0,1.])
