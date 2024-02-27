@@ -10,6 +10,7 @@ objects are kept in meshcat to avoid additional meshcat-internal burdens.
 import pinocchio as pin
 import hppfcl
 import numpy as np
+from tp4.compatibility import hppfcl_normals,HPPFCL3X
 
 class DisplayCollisionWitnessesInMeshcat:
     def __init__(self,viz,point_radius=0.01,linewidth=.1):
@@ -80,14 +81,8 @@ class DisplayCollisionWitnessesInMeshcat:
         self.lineTransfo[:3,:3] = quat.matrix()*dist
         self.viz.applyConfiguration(n,self.lineTransfo)
  
-        # ### DEBUG
-        # self.p1=p1
-        # self.p2=p2
-        # self.n = normal = c.normal
-        # self.dist = dist = normal@(p2-p1)
-        # self.quat = quat
-
     def displayCollisions(self,geom_data):
+        assert(HPPFCL3X) # Only for 3x versions
         self.resetMeshcatObjects(sum([ r.numContacts() for r in geom_data.collisionResults]))
         idx_col = 0
         for collId,r in enumerate(geom_data.collisionResults):
@@ -97,7 +92,7 @@ class DisplayCollisionWitnessesInMeshcat:
                 self._displayOnePair(idx_col,
                                      c.getNearestPoint1(),
                                      c.getNearestPoint2(),
-                                     c.normal)
+                                     hppfcl_normals(c.normal))
                 idx_col += 1
 
     def displayDistances(self,geom_data):
@@ -108,57 +103,6 @@ class DisplayCollisionWitnessesInMeshcat:
             self._displayOnePair(idx_col,
                                  r.getNearestPoint1(),
                                  r.getNearestPoint2(),
-                                 r.normal,r.min_distance)
+                                 hppfcl_normals(r.normal),r.min_distance)
             idx_col += 1
 
-# ### TESTING ZONE
-# ### TESTING ZONE
-# ### TESTING ZONE
-
-if __name__ == "__main__":
-    # Example of use: move 3 bodies and display the collision/distance witnesses.
-    
-    import time
-    from supaero2024.meshcat_viewer_wrapper import MeshcatVisualizer
-    from scenes import buildSceneThreeBodies
-    import random
-
-    # Build a scene
-    model,geom_model = buildSceneThreeBodies()
-    data = model.createData()
-    geom_data = geom_model.createData()
-
-    # Start meshcat
-    viz = MeshcatVisualizer(model=model, collision_model=geom_model,
-                            visual_model=geom_model,url="classical")
-
-    # Force the collision margin to a huge value.
-    for r in geom_data.collisionRequests:
-        r.security_margin = 10
-
-    # Build the viewer add-on to display the witnesses.
-    mcWitnesses = DisplayCollisionWitnessesInMeshcat(viz)
-
-    # Start a random trajectory to display the witnesses.
-    q = pin.randomConfiguration(model)
-    v = (np.random.rand(model.nv)*2-1)*1e-3
-    r0 = [ np.linalg.norm(q[7*i:7*i+3]) for i in range(model.nq//7) ]
-    for t in range(100):
-
-        q = pin.integrate(model,q,v*10)
-        for i in range(model.nq//7):
-            q[7*i:7*i+3] *= r0[i]/np.linalg.norm(q[7*i:7*i+3])
-        viz.display(q)
-
-        if t%2:
-            # Every other iteration, display the collisions
-            pin.computeCollisions(model,data,geom_model,geom_data,q)
-            mcWitnesses.displayCollisions(geom_data)
-        else:
-            # Every other iteration, display the distances (that's the same)
-            pin.computeDistances(model,data,geom_model,geom_data,q)
-            mcWitnesses.displayDistances(geom_data)
-
-        time.sleep(.01)
-
-    assert(mcWitnesses.nwitnesses==3)
