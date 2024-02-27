@@ -211,10 +211,10 @@ def addBox(geom_model,wall_size=4.0,color=np.array([1,1,1,0.2]),transparency=Non
                 geom_model.addCollisionPair(pin.CollisionPair(ig1,ig2))
 
 
-def buildCubes(number_of_cubes,sizes=0.2, masses=1.0,
-               with_corner_collisions = True, with_cube_collisions = False,
-               with_floor=False,
-               corner_insider_the_cube = True):
+def buildSceneCubes(number_of_cubes,sizes=0.2, masses=1.0,
+                    with_corner_collisions = True, with_cube_collisions = False,
+                    with_floor=False,
+                    corner_insider_the_cube = True):
     """Creates the pinocchio pin.Model and pin.GeometryModel
     of a scene containing cubes. The number of cubes is defines by the length of
     the two lists in argument.
@@ -391,7 +391,7 @@ class MyTest(unittest.TestCase):
         model,gmodel = buildSceneThreeBodies()
         assert( isinstance(model,pin.Model) )
     def test_cubes(self):
-        model,gmodel = buildCubes(3)
+        model,gmodel = buildSceneCubes(3)
         assert( isinstance(model,pin.Model) )
         assert( model.nv==3*6 )
         assert( len(geom_model.geometryObjects) == 3*9 )
