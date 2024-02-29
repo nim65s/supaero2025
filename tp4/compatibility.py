@@ -9,6 +9,7 @@ import pinocchio as pin
 import hppfcl
 import numpy as np
 from numpy.linalg import norm
+import warnings
 
 P3X = pin.__version__.split('.')[1] == '99'
 HPPFCL3X = hppfcl.__version__.split('.')[1] == '99'
@@ -85,15 +86,26 @@ if not HPPFCL3X:
 
             # Misc
             else:
-                # Poor patch, not working in penetration
-                print('# Poor patch, not working in penetration',ip,sh1,sh2)
-                normal = d.getNearestPoint2() - d.getNearestPoint1()
-                n = np.linalg.norm(d.normal)
-                if n>1e-5:
-                    d.normal = normal/n
+                if not np.any(np.isnan(d.normal)):
+                    d.normal *= -1 
+                    # Check normal against witness direction, just to be sure
+                    witness = d.getNearestPoint2() - d.getNearestPoint1()
+                    w = np.linalg.norm(witness)
+                    if w>1e-5:
+                        if not np.allclose(witness/w,d.normal):
+                            msg = f"Normal not aligned with witness segment (pair {ip} " \
+                                + f"{type(sh1)}-{type(sh2)})"
+                            warnings.warn(msg, category=UserWarning, stacklevel=2)
                 else:
-                    # Last chance, try to rely on hppfcl normal. It might work...
-                    d.normal *= -1
+                    # Poor patch, not working in penetration
+                    print('# Poor patch, not working in penetration',ip,sh1,sh2)
+                    msg = f"Setting normals from witness segment (pair {ip} " \
+                            + f"{type(sh1)}-{type(sh2)}) ### Poor patch, not working in penetration"
+                    warnings.warn(msg, category=UserWarning, stacklevel=2)
+                    witness = d.getNearestPoint2() - d.getNearestPoint1()
+                    w = np.linalg.norm(witness)
+                    assert(w>1e-5)
+                    d.normal = witness/w
 
     def computeCollisions(model,data,geometry_model,geometry_data,q,stop_at_first_collision=False):
         '''
@@ -101,6 +113,7 @@ if not HPPFCL3X:
         which is more generic in p2x.
         BIG LIMITATIONS: only one single contact point can be detected
         '''
+        isInCollision = False
         computeDistances(model,data,geometry_model,geometry_data,q)
         for p,cr,c,d in zip(geometry_model.collisionPairs,
                             geometry_data.collisionRequests,
@@ -109,7 +122,8 @@ if not HPPFCL3X:
             c.clear()
             id1,id2 = p.first,p.second
             g1,g2 = geometry_model.geometryObjects[id1],geometry_model.geometryObjects[id2]
-            dist = np.dot(d.normal,d.getNearestPoint2()-d.getNearestPoint1())
+            # dist = np.dot(d.normal,d.getNearestPoint2()-d.getNearestPoint1())
+            dist = d.min_distance
             if dist < cr.security_margin:
                 contact = hppfcl.Contact(g1.geometry,g2.geometry,
                                          d.b1,d.b2,
@@ -117,11 +131,18 @@ if not HPPFCL3X:
                                          d.normal,
                                          dist)
                 c.addContact(contact)
+                isInCollision = True
+        return isInCollision
 
     computeDistances.__doc__ += '\n\nOriginal doc:\n' + pin._computeDistances.__doc__
     computeCollisions.__doc__ += '\n\nOriginal doc:\n' + pin._computeCollisions.__doc__
     pin.computeDistances = computeDistances
     pin.computeCollisions = computeCollisions
+
+# -------------------------------------------------------------------------------
+if not HPPFCL3X:
+    hppfcl.hppfcl.Contact.getNearestPoint1 = lambda self: self.pos
+    hppfcl.hppfcl.Contact.getNearestPoint2 = lambda self: self.pos
 
 # -------------------------------------------------------------------------------
 if not P3X:
