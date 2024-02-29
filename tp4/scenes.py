@@ -381,7 +381,7 @@ if __name__ == "__main__":
     
     model,geom_model = buildScenePillsBox(seed=2,nobj=29,no_walls=True,one_of_each=True)
     viz = MeshcatVisualizer(model=model, collision_model=geom_model,
-                            visual_model=geom_model,url="classical")
+                            visual_model=geom_model)
     
     q = pin.randomConfiguration(model)
     viz.display(q)

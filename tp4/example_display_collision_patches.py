@@ -19,13 +19,15 @@ model,geom_model = buildSceneThreeBodies()
 data = model.createData()
 geom_data = geom_model.createData()
 
+# %jupyter_snippet create
 # Obtained by simply copying the collision model
 visual_model = geom_model.copy()
 preallocateVisualObjects(visual_model)
 
 # Start meshcat
 viz = MeshcatVisualizer(model=model, collision_model=geom_model,
-                        visual_model=visual_model,url="classical")
+                        visual_model=visual_model)
+# %end_jupyter_snippet
 
 # Force the collision margin to a huge value.
 for r in geom_data.collisionRequests:
@@ -37,8 +39,10 @@ pin.computeCollisions(model,data,geom_model,geom_data,q,True)
 contact_models = createContactModelsFromCollisions(model,data,geom_model,geom_data)
 contact_datas = [ cm.createData() for cm in contact_models ]
 
+# %jupyter_snippet display
 updateVisualObjects(model,data,contact_models,contact_datas,visual_model,viz)
 viz.display(q)
+# %end_jupyter_snippet
 
 # Start a random trajectory to display the witnesses.
 v = (np.random.rand(model.nv)*2-1)*1e-3

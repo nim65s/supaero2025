@@ -122,7 +122,7 @@ if __name__ == "__main__":
 
     # Start meshcat
     viz = MeshcatVisualizer(model=model, collision_model=geom_model,
-                            visual_model=geom_model,url="classical")
+                            visual_model=geom_model)
 
     # Force the collision margin to a huge value.
     for r in geom_data.collisionRequests:

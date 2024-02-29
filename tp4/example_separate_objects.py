@@ -26,7 +26,7 @@ q = pin.randomConfiguration(model)
 visual_model = geom_model.copy()
 preallocateVisualObjects(visual_model,100)
 viz = MeshcatVisualizer(model=model, collision_model=geom_model,
-                        visual_model=visual_model,url="classical")
+                        visual_model=visual_model)
 updateVisualObjects(model,data,[],[],visual_model,viz)
 viz.display(q)
 

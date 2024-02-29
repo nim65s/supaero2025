@@ -20,7 +20,7 @@ geom_data = geom_model.createData()
 
 # Start meshcat
 viz = MeshcatVisualizer(model=model, collision_model=geom_model,
-                        visual_model=geom_model,url="classical")
+                        visual_model=geom_model)
 # %end_jupyter_snippet
 
 # %jupyter_snippet witness

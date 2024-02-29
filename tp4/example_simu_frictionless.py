@@ -44,7 +44,7 @@ for req in geom_data.collisionRequests:
 visual_model = geom_model.copy()
 preallocateVisualObjects(visual_model,10)
 viz = MeshcatVisualizer(model=model, collision_model=geom_model,
-                        visual_model=visual_model,url="classical")
+                        visual_model=visual_model)
 updateVisualObjects(model,data,[],[],visual_model,viz)
 
 # ### INIT MODEL STATE
