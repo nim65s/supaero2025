@@ -30,6 +30,7 @@ def _createOneConstraint(model,data,geom_model,geom_data,pairId,OC1,OC2,normal,c
     collision body, in that case this field is used to make the name of each witness
     different.
     '''
+    # %jupyter_snippet frames
     pair = geom_model.collisionPairs[pairId]
     gid1,gid2 = pair.first,pair.second
     g1 = geom_model.geometryObjects[gid1]
@@ -46,15 +47,19 @@ def _createOneConstraint(model,data,geom_model,geom_data,pairId,OC1,OC2,normal,c
     assert(np.isclose(quat.norm(),1))
     oMc1 = pin.SE3(quat.matrix(),OC1) # Placement of first contact frame in world
     oMc2 = pin.SE3(quat.matrix(),OC2) # Placement of second contact frame in world
+    # %end_jupyter_snippet
 
     # Finally, define the contact model for this point with Pinocchio structure
-    cm = pin.RigidConstraintModel(pin.ContactType.CONTACT_3D,
-                                  model,
-                                  jid1,oMj1.inverse()*oMc1,
-                                  jid2,oMj2.inverse()*oMc2,
-                                  pin.LOCAL)
-    cm.name = CONTACT_TEMPLATE_NAME.format(pairId=pairId,contactId=contactId)
-    return cm
+    # %jupyter_snippet model
+    contact_model = pin.RigidConstraintModel(
+        pin.ContactType.CONTACT_3D,
+        model,
+        jid1,oMj1.inverse()*oMc1,
+        jid2,oMj2.inverse()*oMc2,
+        pin.LOCAL)
+    # %end_jupyter_snippet
+    contact_model.name = CONTACT_TEMPLATE_NAME.format(pairId=pairId,contactId=contactId)
+    return contact_model
 
 
 def createContactModelsFromCollisions(model,data,geom_model,geom_data):
@@ -71,13 +76,11 @@ def createContactModelsFromCollisions(model,data,geom_model,geom_data):
     for collId,r in enumerate(geom_data.collisionResults):
         if r.numContacts()>0:
             for c in r.getContacts():
-                if HPPFCL3X:
-                    OC1 = c.getNearestPoint1() # Position of first contact point in world
-                    OC2 = c.getNearestPoint2() # Position of second contact point in world
-                    # In some simu solver, it might be prefered to have the contact point in between the collisions.
-                    # OC1=OC2=(OC1+OC2)/2
-                else:
-                    OC1 = OC2 = c.pos
+                OC1 = c.getNearestPoint1() # Position of first contact point in world
+                OC2 = c.getNearestPoint2() # Position of second contact point in world
+                # In some simu solver, it might be prefered to have the contact point in between the collisions.
+                # OC1=OC2=(OC1+OC2)/2
+                # In 2x, this is the default behavior (p1=p2=pos)
 
                 cm = _createOneConstraint(model,data,geom_model,geom_data,collId,OC1,OC2,c.normal)
                 
@@ -129,13 +132,17 @@ if __name__ == "__main__":
     q[2::7] += 1 # above the floor
     viz.display(q)
 
+    # %jupyter_snippet example
     pin.computeCollisions(model,data,geom_model,geom_data,q,False)
     contact_models = createContactModelsFromCollisions(model,data,geom_model,geom_data)
     contact_datas = [ cm.createData() for cm in contact_models ]
 
     pin.computeDistances(model,data,geom_model,geom_data,q)
-    contact_models_dist = createContactModelsFromDistances(model,data,geom_model,geom_data,.1)
-    
+    contact_models = createContactModelsFromDistances(model,data,geom_model,geom_data,
+                                                           threshold=10) # threshold in meter
+    contact_datas = [ cm.createData() for cm in contact_models ]
+    # %end_jupyter_snippet
+
     from display_witness import DisplayCollisionWitnessesInMeshcat
     wdisp = DisplayCollisionWitnessesInMeshcat(viz)
     pin.computeDistances(model,data,geom_model,geom_data,q)
