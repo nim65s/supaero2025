@@ -6,6 +6,7 @@ from supaero2024.hppfcl_utils import load_hppfcl_convex_from_stl_file
 from tp4.compatibility import HPPFCL3X
 import unittest
 import warnings
+from tp4.robot_hand import RobotHand
 
 def buildScenePillsBox(nobj=30,wall_size=4.0,seed=0,no_walls=False,one_of_each=False):
     '''
@@ -16,6 +17,17 @@ def buildScenePillsBox(nobj=30,wall_size=4.0,seed=0,no_walls=False,one_of_each=F
     box <wall_size> and the random seed <seed>.
     If no_walls is True, then don't build the walls.
     If one_of_each is True, then don't randomize the type of the objects.
+
+    Parameters:
+    - nobj (int): The number of objects to generate (default is 30).
+    - wall_size (float): The size of the walls of the box (default is 4.0).
+    - seed (int): Seed value for random number generation (default is 0).
+    - no_walls (bool): If True, no box is added (default is False).
+    - one_of_each (bool): If True, only one object of each type (ellipsoid, capsule, weird-shape) 
+    will be generated in turn (1,2,3,1,2,3,...) (default is False).
+
+    Returns:
+    - scene: A generated scene containing the specified number of pill-shaped objects within a box.
     '''
     SEED = seed
     NOBJ = nobj
@@ -87,6 +99,13 @@ def buildSceneThreeBodies(seed=0,size=1.0):
     '''
     Build a new scenes composed of 3 floating objects.
     This function is a proxy over the more general buildScenePillsBox.
+ 
+    Parameters:
+    - seed (int): Seed value for random number generation (default is 0).
+    - size (float): The size of the scene (default is 1.0).
+
+    Returns:
+    - scene: A generated scene containing three pill-shape floating objects.
     '''
     return buildScenePillsBox(nobj=3,no_walls=True,seed=seed,
                               one_of_each=True,wall_size=size)
@@ -95,6 +114,14 @@ def buildSceneThreeBodies(seed=0,size=1.0):
 def addFloor(geom_model,altitude=0,addCollisionPairs=True,color=np.array([0.9, 0.6, 0., .20])):
     '''
     Add an infinite horizontal plan to an existing scene.
+
+    Parameters:
+    - geom_model: The geometric model of the scene to which the floor will be added.
+    - altitude (float): The altitude of the floor (default is 0).
+    - addCollisionPairs (bool): If True, collision pairs will be added for the floor with all the other
+    objects already in the scene (default is True).
+    - color (numpy.ndarray): The color of the floor in RGBA format (default is np.array([0.9, 0.6, 0., .20]))
+    with RGB-transparency syntax.
     '''
     shape = hppfcl.Halfspace( np.array([0,0,1.]),0)
     M = pin.SE3.Identity()
@@ -116,6 +143,13 @@ def addBox(geom_model,wall_size=4.0,color=np.array([1,1,1,0.2]),transparency=Non
     '''
     Add a box composed of 6 transparent walls forming a cube.
     This box is typically though to come outside of a previously defined object set.
+
+    Parameters:
+    - geom_model: The geometric model of the scene to which the box will be added.
+    - wall_size (float): The size of each wall of the box (default is 4.0).
+    - color (numpy.ndarray): The color of the box walls in RGBA format (default is np.array([1, 1, 1, 0.2])).
+    - transparency (float or None): The transparency of the box walls (default is None). If both color and 
+    transparency are set, the last component of the color will be ignored.
     '''
     WALL_SIZE = wall_size
     WALL_THICKNESS = WALL_SIZE*.05
@@ -352,6 +386,9 @@ def buildSceneCubes(number_of_cubes,sizes=0.2, masses=1.0,
 
     return model, geom_model
 
+def buildSceneRobotHand():
+    robot = RobotHand()
+    return robot.model,robot.gmodel
                 
 ### TEST ZONE ############################################################
 ### This last part is to automatically validate the versions of this example.
@@ -379,10 +416,23 @@ if __name__ == "__main__":
     from supaero2024.meshcat_viewer_wrapper import MeshcatVisualizer
     import time
     
-    model,geom_model = buildScenePillsBox(seed=2,nobj=29,no_walls=True,one_of_each=True)
+    # %jupyter_snippet pills
+    model,geom_model = buildScenePillsBox(seed=2,nobj=30,wall_size=2.0,one_of_each=True)
+    visual_model = geom_model.copy()
     viz = MeshcatVisualizer(model=model, collision_model=geom_model,
                             visual_model=geom_model)
-    
+
+    # Generate colliding configuration
+    data = model.createData()
+    geom_data = geom_model.createData()
+    for i in range(10):
+        q0 = pin.randomConfiguration(model)
+        pin.computeCollisions(model,data,geom_model,geom_data,q0)
+        if sum([ len(c.getContacts()) for c in geom_data.collisionResults ])>10:
+            break
+        print(sum([ len(c.getContacts()) for c in geom_data.collisionResults ]))
+    # %end_jupyter_snippet
+
     q = pin.randomConfiguration(model)
     viz.display(q)
 

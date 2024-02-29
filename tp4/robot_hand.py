@@ -61,6 +61,7 @@ class RobotHand:
         self.q0[2:-4] = np.pi / 6
         self.q0[11:] = np.pi / 4
         self.v0 = np.zeros(self.model.nv)
+        self.model.referenceConfigurations['default'] = self.q0.copy()
         self.collisionPairs = []
 
         self.collision_model = self.gmodel
@@ -445,54 +446,54 @@ class RobotHand:
             )
         )
 
-        # Prepare some patches to represent collision points. Yet unvisible.
-        if self.viewer is not None:
-            self.maxContact = 10
-            for i in range(self.maxContact):
-                self.viewer.addCylinder(
-                    "world/cpatch%d" % i, 0.01, 0.003, [1.0, 0, 0, 1]
-                )
-                self.viewer.setVisibility("world/cpatch%d" % i, "OFF")
+    #     # Prepare some patches to represent collision points. Yet unvisible.
+    #     if self.viewer is not None:
+    #         self.maxContact = 10
+    #         for i in range(self.maxContact):
+    #             self.viewer.addCylinder(
+    #                 "world/cpatch%d" % i, 0.01, 0.003, [1.0, 0, 0, 1]
+    #             )
+    #             self.viewer.setVisibility("world/cpatch%d" % i, "OFF")
 
-    def hideContact(self, fromContactRef=0):
-        if fromContactRef < 0:
-            fromContactRef = self.maxContact + fromContactRef
-        for i in range(fromContactRef, self.maxContact):
-            name = "world/cpatch%d" % i
-            self.viewer.setVisibility(name, "OFF")
+    # def hideContact(self, fromContactRef=0):
+    #     if fromContactRef < 0:
+    #         fromContactRef = self.maxContact + fromContactRef
+    #     for i in range(fromContactRef, self.maxContact):
+    #         name = "world/cpatch%d" % i
+    #         self.viewer.setVisibility(name, "OFF")
 
-    def displayContact(self, contact, contactRef=0, refresh=False):
-        """
-        Display a small red disk at the position of the contact, perpendicular to the
-        contact normal.
+    # def displayContact(self, contact, contactRef=0, refresh=False):
+    #     """
+    #     Display a small red disk at the position of the contact, perpendicular to the
+    #     contact normal.
 
-        @param contact: the contact object, taken from Pinocchio (HPP-FCL) e.g.
-        geomModel.collisionResults[0].geContact(0).
-        @param contactRef: use patch named "world/cparch%d" % contactRef, 0 by default.
-        @param refresh: option to refresh the viewer before returning, False by default.
-        """
-        name = "world/cpatch%d" % contactRef
-        if self.viewer is None:
-            return
-        self.viewer.setVisibility(name, "ON")
-        M = pin.SE3(
-            pin.Quaternion.FromTwoVectors(np.array([0, 0, 1]), contact.normal).matrix(),
-            contact.pos,
-        )
-        self.viewer.applyConfiguration(name, pin.se3ToXYZQUATtuple(M))
-        if refresh:
-            self.viewer.refresh()
+    #     @param contact: the contact object, taken from Pinocchio (HPP-FCL) e.g.
+    #     geomModel.collisionResults[0].geContact(0).
+    #     @param contactRef: use patch named "world/cparch%d" % contactRef, 0 by default.
+    #     @param refresh: option to refresh the viewer before returning, False by default.
+    #     """
+    #     name = "world/cpatch%d" % contactRef
+    #     if self.viewer is None:
+    #         return
+    #     self.viewer.setVisibility(name, "ON")
+    #     M = pin.SE3(
+    #         pin.Quaternion.FromTwoVectors(np.array([0, 0, 1]), contact.normal).matrix(),
+    #         contact.pos,
+    #     )
+    #     self.viewer.applyConfiguration(name, pin.se3ToXYZQUATtuple(M))
+    #     if refresh:
+    #         self.viewer.refresh()
 
-    def display(self, q):
-        pin.forwardKinematics(self.model, self.data, q)
-        pin.updateGeometryPlacements(self.model, self.data, self.gmodel, self.gdata)
-        if self.viewer is None:
-            return
-        for i, g in enumerate(self.gmodel.geometryObjects):
-            self.viewer.applyConfiguration(
-                g.name, pin.se3ToXYZQUATtuple(self.gdata.oMg[i])
-            )
-        self.viewer.refresh()
+    # def display(self, q):
+    #     pin.forwardKinematics(self.model, self.data, q)
+    #     pin.updateGeometryPlacements(self.model, self.data, self.gmodel, self.gdata)
+    #     if self.viewer is None:
+    #         return
+    #     for i, g in enumerate(self.gmodel.geometryObjects):
+    #         self.viewer.applyConfiguration(
+    #             g.name, pin.se3ToXYZQUATtuple(self.gdata.oMg[i])
+    #         )
+    #     self.viewer.refresh()
 
 
 ### TEST ZONE ############################################################
