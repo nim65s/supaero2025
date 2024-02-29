@@ -34,6 +34,7 @@ print('SEED = ',SEED)
 np.random.seed(SEED)
 random.seed(SEED)
 
+# %jupyter_snippet param
 # ### TEST PARAMETERS
 NX = 20 # x dimension (search space)
 NEQ = 5 # number of equalities
@@ -41,6 +42,7 @@ NINEQ = 3 # Number of inequalities
 WITH_BOUNDS = True # Additional bounds on x
 VERBOSE = False # Do you want to see the result?
 ACCURACY = 1e-6 # Threshold for solver stoping criteria and posterior checks
+# %end_jupyter_snippet
 
 # ### PROBLEM SETUP
 # %jupyter_snippet matrices
@@ -86,21 +88,26 @@ qp.init(H, g, Ae, be, Ai, bi[:,0], bi[:,1],
         bounds[:,0] if WITH_BOUNDS else None,
         bounds[:,1] if WITH_BOUNDS else None)
 qp.solve()
+# %end_jupyter_snippet
 
 # ### RESULT
+# %jupyter_snippet result
 x,y,z = qp.results.x,qp.results.y,qp.results.z
 if WITH_BOUNDS:
     w = z[NINEQ:] # bounds
     z = z[:NINEQ] # general inequalities
 cost = qp.results.info.objValue
+# %end_jupyter_snippet
 
 # ### VERBOSE
 if VERBOSE:
     # print an optimal solution
+    # %jupyter_snippet print
     print("Primal optimum x: {}".format(x))
     print("Dual optimum (equalities) y: {}".format(y))
     print("Dual optimum (ineq) z: {}".format(z))
     print("Dual optimum (bounds) w: {}".format(w))
+    # %end_jupyter_snippet
 
 # ### CHECK THE RESULT
 # Sanity check the obtained cost.
