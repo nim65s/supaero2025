@@ -4,7 +4,6 @@ import unittest
 import matplotlib.pylab as plt
 import numpy as np
 import pinocchio as pin
-from numpy.linalg import inv, norm
 from tp4.scenes import buildSceneRobotHand
 
 from supaero2024.meshcat_viewer_wrapper import MeshcatVisualizer
@@ -26,13 +25,16 @@ vq = np.zeros(model.nv)
 # %end_jupyter_snippet
 
 # %jupyter_snippet hyper
-# Hyperparameters for the control and the simu
-Kp = 50.0  # proportional gain (P of PD)
-Kv = 2 * np.sqrt(Kp)  # derivative gain (D of PD)
+# Hyperparameters for the simu
 DT = 1e-3  # simulation timestep
 DT_VISU = 1/50
 DURATION = 3. # duration of simulation
 T = int(DURATION/DT) # number of time steps
+# %end_jupyter_snippet
+# %jupyter_snippet hyper_control
+# Hyperparameters for the control
+Kp = 50.0  # proportional gain (P of PD)
+Kv = 2 * np.sqrt(Kp)  # derivative gain (D of PD)
 # %end_jupyter_snippet
 
 ### Examples for computing the generalized mass matrix and dynamic bias.
@@ -44,11 +46,11 @@ b = pin.nle(model, data, q, vq)
 ### Example to compute the forward dynamics from M and b
 # %jupyter_snippet dyninv
 tauq = np.random.rand(model.nv)*2-1
-aq = inv(M) @ (tauq - b)
+aq = np.linalg.inv(M) @ (tauq - b)
 # %end_jupyter_snippet
 # Alternatively, call the ABA algorithm
 aq_bis = pin.aba(model, data, q, vq, tauq)
-print(f"Sanity check, should be 0 ... {norm(aq-aq_bis)}")
+print(f"Sanity check, should be 0 ... {np.linalg.norm(aq-aq_bis)}")
 assert(np.allclose(aq,aq_bis))
     
 ### Example to integrate an acceleration.
@@ -82,7 +84,7 @@ for i in range(T):
     tauq = -Kp * (q - qdes(t)) - Kv * (vq - qdes.velocity(t)) + qdes.acceleration(t)
 
     # Simulated the resulting acceleration (forward dynamics
-    aq = inv(M) @ (tauq - b)
+    aq = np.linalg.inv(M) @ (tauq - b)
 
     # Integrate the acceleration.
     vq += aq * DT
@@ -113,7 +115,7 @@ class PDTest(unittest.TestCase):
 
         M = pin.crba(model, data, q)
         b = pin.nle(model, data, q, vq)
-        aq = inv(M) @ (tauq - b)
+        aq = np.linalg.inv(M) @ (tauq - b)
         aq_bis = pin.aba(model, data, q, vq, tauq)
         self.assertTrue(np.allclose(aq, aq_bis))
         self.assertTrue(len(hq) == len(hqdes))
