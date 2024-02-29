@@ -28,6 +28,7 @@ SEED = 1
 np.random.seed(SEED)
 pin.seed(SEED)
 
+# %jupyter_snippet init
 # ### SCENE
 # Create scene with multiple objects
 model,geom_model = buildSceneCubes(1,with_floor=True,with_corner_collisions=True,with_cube_collisions=False)
@@ -51,6 +52,7 @@ updateVisualObjects(model,data,[],[],visual_model,viz)
 q0 = model.referenceConfigurations['default']
 
 viz.display(q0)
+# %end_jupyter_snippet
 
 q = q0.copy()
 v = np.zeros(model.nv)
@@ -59,6 +61,7 @@ v = np.zeros(model.nv)
 hq = []
 hv = []
 
+# %jupyter_snippet loop
 # ### MAIN LOOP
 # ### MAIN LOOP
 # ### MAIN LOOP
@@ -90,10 +93,11 @@ for t in range(T):
         # (frictionless slide on the tangent components, uncontrained)
         J = -pin.getConstraintsJacobian(model, data, contact_models, contact_datas)[2::3,:]
         assert(J.shape == (nc,model.nv))
-        
+        # %end_jupyter_snippet
         if PRIMAL_FORMULATION:
             # ### PRIMAL_FORMULATION:
 
+            # %jupyter_snippet primal
             # Solve the primal QP (search the velocity)
             # min_v  .5 vMv - vfMv st Jv>=0
             qp1 = QP(model.nv,0,nc,False)
@@ -113,8 +117,10 @@ for t in range(T):
             # Check the acceleration obtained from the forces
             assert( np.allclose(pin.aba(model, data, q, v, tau + J.T @ forces/DT),
                                 (vnext-v)/DT,rtol=1e-3,atol=1e-6))
+            # %end_jupyter_snippet
 
         if DUAL_FORMULATION:
+            # %jupyter_snippet dual
             # ### DUAL FORMULATION
             # Solve the dual QP (search the forces)
             # min_f .5 f D f st f>=0, D f + J vf >= 0
@@ -142,14 +148,17 @@ for t in range(T):
             assert(np.all(forces>=-1e-6))
             assert(np.all(J@vnext>=-1e-6))
             assert(abs( forces@J@vnext)<1e-6)
+            # %end_jupyter_snippet
 
         if PRIMAL_FORMULATION and DUAL_FORMULATION:
+            # %jupyter_snippet check
             # Check QP2 primal vs QP1 dual
             assert(np.allclose(qp2.results.x,-qp1.results.z,rtol=1e-3,atol=1e-4))
             # Check QP2 constraint vs QP1 constraint
             assert(np.allclose(delasus@qp2.results.x+J@vf,
                                J@qp1.results.x,rtol=1,atol=1e-5))
-        
+            # %end_jupyter_snippet
+
         v = vnext
         
     # Finally, integrate the valocity
