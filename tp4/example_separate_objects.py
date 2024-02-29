@@ -37,15 +37,18 @@ viz.display(q)
 # Compute a collision free configuration by pushing away the colliding bodies
 # (false physics)
 
+# %jupyter_snippet hyperparams
 # HYPER PARAMETERS OF THE PUSH STRATEGY
 PUSH_FACTOR = .1
 EPSILON = 1e-1
 NB_ITER = 100
 # Compute the contact information based on distances or collisions?
 USE_DISTANCE = True
+# %end_jupyter_snippet
 # With P2X, only USE_DISTANCE=True is reasonible
 assert(USE_DISTANCE or P3X)
 
+# %jupyter_snippet loop
 # Set minimal distance to be EPSILON
 # (can be zero, but the rendering is less clear).
 for r in geom_data.collisionRequests:
@@ -115,10 +118,13 @@ for i in range(NB_ITER):
         # Meshcat is slow to display the patches, display once in a while
         updateVisualObjects(model,data,contact_models,contact_datas,visual_model,viz)
         viz.display(q)
+# %end_jupyter_snippet
 
+# %jupyter_snippet plot
 # Plot the distances
 for k,v in h_dist.items():
     h = plt.plot(v,label=k)
 plt.legend()
+# %end_jupyter_snippet
 
 print('Press plt.show() to display the plots.')
