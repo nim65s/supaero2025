@@ -446,6 +446,8 @@ class RobotHand:
             )
         )
 
+        self.model.lowerPositionLimit = np.ones(self.model.nq)*-2
+        self.model.upperPositionLimit = np.ones(self.model.nq)*2
     #     # Prepare some patches to represent collision points. Yet unvisible.
     #     if self.viewer is not None:
     #         self.maxContact = 10

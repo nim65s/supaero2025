@@ -386,10 +386,57 @@ def buildSceneCubes(number_of_cubes,sizes=0.2, masses=1.0,
 
     return model, geom_model
 
-def buildSceneRobotHand():
+def buildSceneRobotHand(with_item=False,item_size=0.05):
     robot = RobotHand()
-    return robot.model,robot.gmodel
-                
+
+    model, geom_model = robot.model,robot.gmodel
+
+    if not with_item:
+        return model,geom_model
+
+    # Add a floating capsule
+    model_item = pin.Model()
+    geom_model_item = pin.GeometryModel()
+
+    shape = hppfcl.Capsule(item_size/2, item_size)
+    world_bounds = np.array([ 1 ] * 3 + [ np.inf ] * 4)
+
+    jid = model_item.addJoint(0,pin.JointModelFreeFlyer(),pin.SE3.Identity(),'obj1',
+                         min_config=-world_bounds,max_config=world_bounds,
+                         max_velocity=np.ones(6),max_effort=np.ones(6))
+    color = np.random.rand(4)
+    color[-1] = 1
+    # Place the object so that it is centered
+    Mcenter = pin.SE3(np.eye(3),-shape.computeCOM())
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        geom = pin.GeometryObject( f"{str(type(shape))[22:-2]}_{jid}", jid,jid,
+                                   placement=Mcenter,collision_geometry=shape)
+
+    geom.meshColor = np.array(color)
+    geom_model_item.addGeometryObject(geom)
+    # Add inertia
+    volum = shape.computeVolume()
+    I = shape.computeMomentofInertia()
+    density = 700 # kg/m3 = wood
+    model_item.appendBodyToJoint(jid,
+                            pin.Inertia(volum*density, np.zeros(3), I*density),
+                            pin.SE3.Identity())
+
+    # Merge both model
+    model_dual,geom_model_dual = pin.appendModel(model,model_item,
+                                                 geom_model,geom_model_item,
+                                                 0,pin.SE3.Identity())
+
+    # Create the reference configuration for the dual model.
+    # The order is suprising, but I guess the cube is attached as a first joint because
+    # it is right after the universe joint.
+    model_dual.referenceConfigurations['default'] = np.concatenate([
+        np.array([0,0,item_size*2,-0.36220244, -0.24913755,  0.54623537,  0.71299845]),
+        model.referenceConfigurations['default']])
+
+    return model_dual, geom_model_dual
+
 ### TEST ZONE ############################################################
 ### This last part is to automatically validate the versions of this example.
 class MyTest(unittest.TestCase):
@@ -411,6 +458,16 @@ class MyTest(unittest.TestCase):
         assert( isinstance(gmodel,pin.GeometryModel) )
         assert( len(gmodel.geometryObjects ) == 4 )
         assert( len(gmodel.collisionPairs ) == 6 )
+    def test_robot_hand(self):
+        model,gmodel = buildSceneRobotHand()
+        assert( isinstance(gmodel,pin.GeometryModel) )
+        assert( len(gmodel.geometryObjects ) == 18 )
+        assert( len(gmodel.collisionPairs ) == 45 )
+    def test_robot_hand_plus(self):
+        model,gmodel = buildSceneRobotHand(True)
+        assert( isinstance(gmodel,pin.GeometryModel) )
+        assert( len(gmodel.geometryObjects ) == 19 )
+        assert( len(gmodel.collisionPairs ) == 63 )
 
 if __name__ == "__main__":
     from supaero2024.meshcat_viewer_wrapper import MeshcatVisualizer
