@@ -30,7 +30,7 @@ def materialFromColor(color):
 
 class MeshcatVisualizer(PMV):
     def __init__(
-    self, robot=None, model=None, collision_model=None, visual_model=None, url="classical"#None
+    self, robot=None, model=None, collision_model=None, visual_model=None, url=None
     ):
         if robot is not None:
             super().__init__(robot.model, robot.collision_model, robot.visual_model)
@@ -109,36 +109,76 @@ class MeshcatVisualizer(PMV):
 # --------------------------------------------------------------------------------
 # The next part of code is to reproduce the behavior of meshcat in pinocchio
 # 3 (version 2.99) inside pinocchio 2 (version 2.7).
-
-def _loadPrimitive(geometry_object):
+def _loadPrimitive(geometry_object: pin.GeometryObject):
     '''
     Update the pin loadPrimitive function of Pinocchio2 by a code from 
     pinocchio 2.99.
     '''
-    import meshcat.geometry
+    import warnings
     import hppfcl
+    import meshcat.geometry as mg
+    from typing import Optional, Any, Dict, Union, Type, Set
+    MsgType = Dict[str, Union[str, bytes, bool, float, 'MsgType']]
+    pin.ZAxis=np.array([0,0,1.])
+    
+    class mgPlane(mg.Geometry):
+        """A plane of the given width and height. 
+        """
+        def __init__(self, width: float, height: float, widthSegments: float = 1, heightSegments: float = 1):
+            super().__init__()
+            self.width = width
+            self.height = height
+            self.widthSegments = widthSegments
+            self.heightSegments = heightSegments
+
+        def lower(self, object_data: Any) -> MsgType:
+            return {
+                u"uuid": self.uuid,
+                u"type": u"PlaneGeometry",
+                u"width": self.width,
+                u"height": self.height,
+                u"widthSegments": self.widthSegments,
+                u"heightSegments": self.heightSegments,
+            }
 
     # Cylinders need to be rotated
-    R = np.array([[1.,  0.,  0.,  0.],
+    basic_three_js_transform = np.array([[1.,  0.,  0.,  0.],
                   [0.,  0., -1.,  0.],
                   [0.,  1.,  0.,  0.],
                   [0.,  0.,  0.,  1.]])
-    RotatedCylinder = type("RotatedCylinder", (meshcat.geometry.Cylinder,), {"intrinsic_transform": lambda self: R })
+    RotatedCylinder = type("RotatedCylinder", (mg.Cylinder,), {"intrinsic_transform": lambda self: basic_three_js_transform })
 
-    geom = geometry_object.geometry
+    # Cones need to be rotated
+
+    geom: hppfcl.ShapeBase = geometry_object.geometry
     if isinstance(geom, hppfcl.Capsule):
-        if hasattr(meshcat.geometry, 'TriangularMeshGeometry'):
+        if hasattr(mg, 'TriangularMeshGeometry'):
             obj = pin.visualize.meshcat_visualizer.createCapsule(2. * geom.halfLength, geom.radius)
         else:
-            obj = pin.visualize.meshcat_visualizer.RotatedCylinder(2. * geom.halfLength, geom.radius)
+            obj = RotatedCylinder(2. * geom.halfLength, geom.radius)
     elif isinstance(geom, hppfcl.Cylinder):
         obj = RotatedCylinder(2. * geom.halfLength, geom.radius)
+    elif isinstance(geom, hppfcl.Cone):
+        obj = RotatedCylinder(2. * geom.halfLength, 0, geom.radius, 0)
     elif isinstance(geom, hppfcl.Box):
-        obj = meshcat.geometry.Box(npToTuple(2. * geom.halfSide))
+        obj = mg.Box(pin.utils.npToTuple(2. * geom.halfSide))
     elif isinstance(geom, hppfcl.Sphere):
-        obj = meshcat.geometry.Sphere(geom.radius)
+        obj = mg.Sphere(geom.radius)
+    elif isinstance(geom, hppfcl.Plane):
+        To = np.eye(4)
+        To[:3, 3] = geom.d * geom.n
+        TranslatedPlane = type("TranslatedPlane", (mg.Plane,), {"intrinsic_transform": lambda self: To})
+        sx = geometry_object.meshScale[0] * 10
+        sy = geometry_object.meshScale[1] * 10
+        obj = TranslatedPlane(sx, sy)
     elif isinstance(geom, hppfcl.Ellipsoid):
-        obj = meshcat.geometry.Ellipsoid(geom.radii)
+        obj = mg.Ellipsoid(geom.radii)
+    elif isinstance(geom, (hppfcl.Plane,hppfcl.Halfspace)):
+        plane_transform : pin.SE3 = pin.SE3.Identity()
+        # plane_transform.translation[:] = geom.d # Does not work
+        plane_transform.rotation = pin.Quaternion.FromTwoVectors(pin.ZAxis,geom.n).toRotationMatrix()
+        TransformedPlane = type("TransformedPlane", (mgPlane,), {"intrinsic_transform": lambda self: plane_transform.homogeneous })
+        obj = TransformedPlane(1000,1000)
     elif isinstance(geom, hppfcl.ConvexBase):
         obj = pin.visualize.meshcat_visualizer.loadMesh(geom)
     else:
@@ -147,6 +187,7 @@ def _loadPrimitive(geometry_object):
         obj = None
 
     return obj
+
 
 # Update the pin2 version of loadPrimitive by the pin3 version
 pin.visualize.meshcat_visualizer.loadPrimitive = _loadPrimitive
