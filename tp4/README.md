@@ -1,3 +1,12 @@
+# Authorship
+
+This set of examples and exercices comes from 3 sources:
+- The supaero 2023 class
+- The AWS class of Louis Montaut about collision detection
+- The AWS class of Quentin Le Lidec about unilateral simulation
+
+See https://github.com/Gepetto/supaero2023 and https://github.com/agimus-project/winter-school-2023 for the original files.
+
 # Pinocchio 2x/3x compatibility
 
 There are currently two major branches in both Pinocchio and HPP-FCL. The current versions are Pinocchio 2.7 and HPP-FCL 2.4.
