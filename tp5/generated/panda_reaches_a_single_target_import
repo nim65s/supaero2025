@@ -1,0 +1,5 @@
+import crocoddyl
+import pinocchio as pin
+import numpy as np
+import example_robot_data as robex
+import matplotlib.pylab as plt
