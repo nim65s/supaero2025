@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import crocoddyl
 import unittest
-from utils.bicopter import plotBicopterSolution,ViewerBicopter
+from tp5.bicopter_utils import plotBicopterSolution,ViewerBicopter
 
 # %jupyter_snippet hyperparams
 ### HYPER PARAMS: horizon and initial state

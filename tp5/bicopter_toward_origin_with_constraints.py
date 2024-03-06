@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import crocoddyl
 import unittest
-from utils.bicopter import plotBicopterSolution,ViewerBicopter
+from tp5.bicopter_utils import plotBicopterSolution,ViewerBicopter
 import mim_solvers
 
 ### HYPER PARAMS: horizon and initial state
@@ -25,6 +25,7 @@ T = 100
 # and cost derivatives dcost/dx,dcost/du (and corresponding hessians). Here we skip
 # the calcDiff and use finite differences to compute the Jacobians (of xout and r)
 # and approximate Hessian (with Gauss H=J'J).
+# %jupyter_snippet dam
 class DifferentialActionModelBicopter(crocoddyl.DifferentialActionModelAbstract):
 
     def __init__(self):
@@ -89,19 +90,22 @@ class DifferentialActionModelBicopter(crocoddyl.DifferentialActionModelAbstract)
         # Advance user might implement the derivatives. Here
         # we will rely on finite differences.
         pass
+# %end_jupyter_snippet
 
-# Creating the DAM for the bicopter
+# %jupyter_snippet dam_with_bounds
+# Creating the DAM for the bicopter with constrains
 dam = DifferentialActionModelBicopter()
 
 # Using NumDiff for computing the derivatives. We specify the
 # withGaussApprox=True to have approximation of the Hessian based on the
 # Jacobian of the cost residuals.
 damND = crocoddyl.DifferentialActionModelNumDiff(dam, True)
-
+# %end_jupyter_snippet
 
 damND.g_lb = np.array([0, 0])
 damND.g_ub = np.array([20, 20])
 
+# %jupyter_snippet problem
 # Getting the IAM using the simpletic Euler rule
 iam = crocoddyl.IntegratedActionModelEuler(damND, timeStep)
 
@@ -117,6 +121,7 @@ terminalDam.costWeights[3] = 100.0 # angle cos (second order)
 terminalDam.costWeights[4] = 100 # horizontal velocity
 terminalDam.costWeights[5] = 100 # vertical velocity
 terminalDam.costWeights[6] = 100 # angular velocity
+# %end_jupyter_snippet
 
 ### PROBLEM DEFINITION
 
