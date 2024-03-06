@@ -1,2 +1,0 @@
-# Select the solver for this problem
-ddp = crocoddyl.SolverDDP(problem)
