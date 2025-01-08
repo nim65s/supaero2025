@@ -1,32 +1,24 @@
-[tool.poetry]
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
 name = "supaero2025"
 version = "0.1.0"
 description = "Gepetto tutorials, for Pinocchio and Crocoddyl, version for Supaero 2025 class"
-authors = [
-  "Guilhem Saurel <guilhem.saurel@laas.fr>",
-  "Nicolas Mansard <nmansard@laas.fr>",
-  "Théo Martinez <tmartinezf@laas.fr>"
-]
-homepage = "https://github.com/Gepetto/supaero2025"
-license = "BSD-2-Clause"
 readme = "README.md"
-
-
-[tool.poetry.dependencies]
-python = ">=3.9, <3.12"
-gepetuto = "^1.3.0"
-crocoddyl = "^2.0.2"
-matplotlib = "^3.8.2"
-meshcat = "^0.3.2"
-#quadprog = "^0.1.11"
-scipy = "^1.11.4"
-#tensorflow = "^2.13.0"
-proxsuite = "^0.6.1"
-jupyterlab = "^4.0.10"
-
-[tool.isort]
-profile = "black"
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+authors = [
+  { name = "Guilhem Saurel", email = "guilhem.saurel@laas.fr"},
+  { name = "Nicolas Mansard", email = "nmansard@laas.fr"},
+  { name = "Théo Martinez", email = "tmartinezf@laas.fr"}
+]
+requires-python = ">=3.10"
+dependencies = [
+    "crocoddyl>=2.0.2",
+    "gepetuto>=1.3.0",
+    "jupyterlab>=4.3.4",
+    "matplotlib>=3.10.0",
+    "meshcat>=0.3.2",
+    "proxsuite>=0.6.7",
+    "scipy>=1.15.0",
+]
