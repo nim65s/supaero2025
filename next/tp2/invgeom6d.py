@@ -1,5 +1,5 @@
 """
-Stand-alone inverse geom in 6D (controlling the placement, ie translation and 
+Stand-alone inverse geom in 6D (controlling the placement, ie translation and
 orientation of the end effector).  Given a reference placement <Mtarget> ,
 it computes the configuration of the UR5 so that the end-effector placement (6D)
 matches the target. This is done using BFGS solver. While iterating to compute
@@ -16,7 +16,6 @@ import numpy as np
 import pinocchio as pin
 from numpy.linalg import norm
 from scipy.optimize import fmin_bfgs
-
 from supaero2024.meshcat_viewer_wrapper import MeshcatVisualizer
 
 # --- Load robot model

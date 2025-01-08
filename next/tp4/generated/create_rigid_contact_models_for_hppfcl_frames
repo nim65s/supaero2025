@@ -2,8 +2,8 @@ pair = geom_model.collisionPairs[pairId]
     gid1,gid2 = pair.first,pair.second
     g1 = geom_model.geometryObjects[gid1]
     g2 = geom_model.geometryObjects[gid2]
-    jid1 = g1.parentJoint 
-    jid2 = g2.parentJoint 
+    jid1 = g1.parentJoint
+    jid2 = g2.parentJoint
     oMj1 = data.oMi[jid1]
     oMj2 = data.oMi[jid2]
 

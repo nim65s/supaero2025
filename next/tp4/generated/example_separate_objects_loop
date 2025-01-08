@@ -39,7 +39,7 @@ for i in range(NB_ITER):
         oMc1 = cdata.oMc1 = data.oMi[jid1]*j1Mc1
         oMc2 = cdata.oMc2 = data.oMi[jid2]*j2Mc2
         dist = oMc1.actInv(oMc2.translation)[2]-EPSILON  # signed distance
-        
+
         # Decide push velocity at contact point, in contact frames
         # We apply the same velocity proportional to the inverse of the signed
         # distance (exponential repel until EPSILON distance is reached)

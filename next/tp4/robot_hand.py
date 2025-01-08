@@ -61,7 +61,7 @@ class RobotHand:
         self.q0[2:-4] = np.pi / 6
         self.q0[11:] = np.pi / 4
         self.v0 = np.zeros(self.model.nv)
-        self.model.referenceConfigurations['default'] = self.q0.copy()
+        self.model.referenceConfigurations["default"] = self.q0.copy()
         self.collisionPairs = []
 
         self.collision_model = self.gmodel
@@ -446,8 +446,9 @@ class RobotHand:
             )
         )
 
-        self.model.lowerPositionLimit = np.ones(self.model.nq)*-2
-        self.model.upperPositionLimit = np.ones(self.model.nq)*2
+        self.model.lowerPositionLimit = np.ones(self.model.nq) * -2
+        self.model.upperPositionLimit = np.ones(self.model.nq) * 2
+
     #     # Prepare some patches to represent collision points. Yet unvisible.
     #     if self.viewer is not None:
     #         self.maxContact = 10
