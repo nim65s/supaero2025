@@ -3,8 +3,8 @@ FROM python:3.12
 RUN useradd -m user
 USER user
 WORKDIR /home/user/tp
-ENV PATH /home/user/.local/bin:$PATH
-CMD jupyter lab --no-browser --ip='*'
+ENV PATH=/home/user/.local/bin:$PATH
+CMD ["jupyter", "lab", "--no-browser", "--ip='*'"]
 
 ADD --chown=user . .
 RUN git remote set-url origin https://github.com/gepetto/supaero2024
