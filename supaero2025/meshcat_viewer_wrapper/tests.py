@@ -1,6 +1,6 @@
 import doctest
 
-from supaero2024.meshcat_viewer_wrapper import colors
+from supaero2025.meshcat_viewer_wrapper import colors
 
 
 def load_tests(loader, tests, pattern):

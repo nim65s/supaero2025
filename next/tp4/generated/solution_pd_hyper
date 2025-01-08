@@ -1,4 +1,0 @@
-# Hyperparameters for the control and the simu
-Kp = 50.0  # proportional gain (P of PD)
-Kv = 2 * np.sqrt(Kp)  # derivative gain (D of PD)
-dt = 1e-3  # simulation timestep

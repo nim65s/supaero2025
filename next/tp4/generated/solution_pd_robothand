@@ -1,3 +1,0 @@
-robot = RobotHand()
-viz = MeshcatVisualizer(robot)  # , url="classical"
-viz.display(robot.q0)

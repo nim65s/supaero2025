@@ -1,2 +1,0 @@
-M = pin.crba(robot.model, robot.data, q)
-b = pin.nle(robot.model, robot.data, q, vq)

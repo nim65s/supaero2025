@@ -1,2 +1,0 @@
-q = robot.q0.copy()
-vq = np.zeros(robot.model.nv)

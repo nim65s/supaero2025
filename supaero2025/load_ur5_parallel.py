@@ -74,7 +74,7 @@ def load_ur5_parallel():
 
 
 if __name__ == "__main__":
-    from supaero2024.meshcat_viewer_wrapper import MeshcatVisualizer
+    from supaero2025.meshcat_viewer_wrapper import MeshcatVisualizer
 
     robot = load_ur5_parallel()
     viz = MeshcatVisualizer(robot)  # , url="classical"

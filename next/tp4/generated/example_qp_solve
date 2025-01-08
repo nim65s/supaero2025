@@ -1,3 +1,0 @@
-[x, cost, _, niter, lag, iact] = quadprog.solve_qp(
-    A, b, C.T, d
-)  # Notice that C.T is passed instead of C

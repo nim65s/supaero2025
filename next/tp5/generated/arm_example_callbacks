@@ -1,6 +1,0 @@
-ddp.setCallbacks(
-    [
-        crocoddyl.CallbackLogger(),
-        crocoddyl.CallbackVerbose(),
-    ]
-)
