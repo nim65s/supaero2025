@@ -1,20 +1,19 @@
 import time
 import unittest
 
-import matplotlib.pylab as plt
 import numpy as np
 import pinocchio as pin
+from supaero2024.meshcat_viewer_wrapper import MeshcatVisualizer
 from tp4.scenes import buildSceneRobotHand
 
-from supaero2024.meshcat_viewer_wrapper import MeshcatVisualizer
-
 # %jupyter_snippet robothand
-model,geom_model = buildSceneRobotHand()
+model, geom_model = buildSceneRobotHand()
 data = model.createData()
 visual_model = geom_model.copy()
-viz = MeshcatVisualizer(model=model, collision_model=geom_model,
-                        visual_model=visual_model)
-q0 = model.referenceConfigurations['default']
+viz = MeshcatVisualizer(
+    model=model, collision_model=geom_model, visual_model=visual_model
+)
+q0 = model.referenceConfigurations["default"]
 viz.display(q0)
 # %end_jupyter_snippet
 
@@ -27,9 +26,9 @@ vq = np.zeros(model.nv)
 # %jupyter_snippet hyper
 # Hyperparameters for the simu
 DT = 1e-3  # simulation timestep
-DT_VISU = 1/50
-DURATION = 3. # duration of simulation
-T = int(DURATION/DT) # number of time steps
+DT_VISU = 1 / 50
+DURATION = 3.0  # duration of simulation
+T = int(DURATION / DT)  # number of time steps
 # %end_jupyter_snippet
 # %jupyter_snippet hyper_control
 # Hyperparameters for the control
@@ -45,14 +44,14 @@ b = pin.nle(model, data, q, vq)
 
 ### Example to compute the forward dynamics from M and b
 # %jupyter_snippet dyninv
-tauq = np.random.rand(model.nv)*2-1
+tauq = np.random.rand(model.nv) * 2 - 1
 aq = np.linalg.inv(M) @ (tauq - b)
 # %end_jupyter_snippet
 # Alternatively, call the ABA algorithm
 aq_bis = pin.aba(model, data, q, vq, tauq)
 print(f"Sanity check, should be 0 ... {np.linalg.norm(aq-aq_bis)}")
-assert(np.allclose(aq,aq_bis))
-    
+assert np.allclose(aq, aq_bis)
+
 ### Example to integrate an acceleration.
 # %jupyter_snippet integrate
 vq += aq * DT
@@ -91,7 +90,7 @@ for i in range(T):
     q = pin.integrate(model, q, vq * DT)
 
     # Display once in a while...
-    if DT_VISU is not None and abs((t) % DT_VISU)<=0.9*DT:
+    if DT_VISU is not None and abs((t) % DT_VISU) <= 0.9 * DT:
         viz.display(q)
         time.sleep(DT_VISU)
 
@@ -107,9 +106,9 @@ for i in range(T):
 class PDTest(unittest.TestCase):
     def test_logs(self):
         print(self.__class__.__name__)
-        model,gmodel = buildSceneRobotHand()
+        model, gmodel = buildSceneRobotHand()
         data = model.createData()
-        q = model.referenceConfigurations['default'].copy()
+        q = model.referenceConfigurations["default"].copy()
         vq = np.random.rand(model.nv)
         tauq = np.random.rand(model.nv)
 
@@ -119,6 +118,7 @@ class PDTest(unittest.TestCase):
         aq_bis = pin.aba(model, data, q, vq, tauq)
         self.assertTrue(np.allclose(aq, aq_bis))
         self.assertTrue(len(hq) == len(hqdes))
+
 
 if __name__ == "__main__":
     PDTest().test_logs()

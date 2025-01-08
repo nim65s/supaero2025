@@ -11,7 +11,7 @@ for t in range(T):
     # Create contact models from collision
     contact_models = createContactModelsFromCollisions(model,data,geom_model,geom_data)
     contact_datas = [ cm.createData() for cm in contact_models ]
-    
+
     nc = len(contact_models)
     if nc==0:
         # No collision, just integrate the free dynamics

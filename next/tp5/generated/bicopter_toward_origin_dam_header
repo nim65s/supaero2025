@@ -2,7 +2,7 @@ class DifferentialActionModelBicopter(crocoddyl.DifferentialActionModelAbstract)
 
     def __init__(self):
         '''
-        Init on top of the DAM class. 
+        Init on top of the DAM class.
         Mostly set up the hyperparameters of this model (mass, length, cost, etc).
         ng=0 says we have 0 constraints.
         '''

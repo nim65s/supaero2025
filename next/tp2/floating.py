@@ -14,10 +14,8 @@ import unittest
 
 import example_robot_data as robex
 import numpy as np
-import pinocchio as pin
 from numpy.linalg import norm
 from scipy.optimize import fmin_bfgs
-
 from supaero2024.meshcat_viewer_wrapper import MeshcatVisualizer
 
 # --- Load robot model
@@ -87,6 +85,7 @@ def callback(q):
 
     viz.display(q)
     time.sleep(1e-2)
+
 
 qopt = fmin_bfgs(cost, robot.q0, callback=callback)
 # %end_jupyter_snippet

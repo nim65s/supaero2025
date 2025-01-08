@@ -31,23 +31,32 @@ pip install .
 
 After that, you can start the server with `jupyter notebook`
 
+### uv
+
+Instead of using pip and venv, you can use this project directly with [uv](https://docs.astral.sh/uv/), which will
+setup everything for you, and you'll only need one command:
+
+```bash
+uv run jupyter lab
+```
+
 ### Docker
 
 If the default setup is not working for you, as a backup solution, a Docker image is provided, and can be started with:
 
 ```bash
-docker run --rm -p 7000:7000 -p 7001:7001 -p 7002:7002 -p 7003:7003 -p 7004:7004 -p 8888:8888 -v data:/home/user/tp -it gepetto/supaero2024
+docker run --rm -p 7000:7000 -p 7001:7001 -p 7002:7002 -p 7003:7003 -p 7004:7004 -p 8888:8888 -v data:/home/user/tp -it gepetto/supaero2025
 ```
 
 On Linux host systems, you may simply start the Docker with:
 
 ```bash
-docker run --rm --net host -v data:/home/user/tp -it gepetto/supaero
+docker run --rm --net host -v data:/home/user/tp -it gepetto/supaero2025
 ```
 
 In case of big update, you must update the docker:
 ```bash
-docker pull gepetto/supaero2024
+docker pull gepetto/supaero2025
 ```
 
 ## Use
@@ -61,7 +70,7 @@ On a native installation, just go in the folder containing the tutorials and exe
 
 With a docker, execute the following:
 ```bash
-docker run --rm -v data:/home/user/tp -it gepetto/supaero git pull --rebase origin main
+docker run --rm -v data:/home/user/tp -it gepetto/supaero2025 git pull --rebase origin main
 ```
 
 To avoid conflict when pulling a new version, you should better do your modifications in copy of the original files,
@@ -87,7 +96,7 @@ newgrp docker
 
 [\[Matrix\]](https://matrix.org/) is a distributed chat system that will be used during the class. Consider [creating
 an account](https://app.element.io/#/register) and join [the classroom
-channel](https://matrix.to/#/#supaero-robotics-2024:laas.fr).
+channel](https://matrix.to/#/#supaero-robotics-2025:laas.fr).
 
 ## Set up of the system ... for admin only
 
@@ -104,7 +113,7 @@ export DOCKER_BUILDKIT=1
 ```
 Then build:
 ```bash
-docker build -t gepetto/supaero2024 .
+docker build -t gepetto/supaero2025 .
 ```
 Log to Docker-hub using your credentials.
 ```bash
@@ -113,5 +122,5 @@ docker login
 Use the login corresponding to +https://hub.docker.com/+.
 And push it to the Gepetto repository of Docker-hub.
 ```bash
-docker push gepetto/supaero2024
+docker push gepetto/supaero2025
 ```
