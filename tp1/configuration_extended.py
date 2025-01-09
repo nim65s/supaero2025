@@ -9,6 +9,7 @@ import time
 import numpy as np
 from numpy.linalg import norm
 from scipy.optimize import fmin_bfgs, fmin_slsqp
+
 from supaero2025.meshcat_viewer_wrapper import MeshcatVisualizer
 from supaero2025.meshcat_viewer_wrapper.transformations import planar, translation2d
 
