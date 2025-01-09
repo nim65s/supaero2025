@@ -1,6 +1,6 @@
-# Supaero robotics, 2024
+# Supaero robotics, 2025
 
-This repository contains the exercices for the robotics class at Supaero, 2024.
+This repository contains the exercices for the robotics class at Supaero, 2025.
 The exercices are organized by notebook. Each notebook corresponds to one chapter of the class.
 The notebooks are in Python and based on the software [Pinocchio](https://github.com/stack-of-tasks/pinocchio).
 
@@ -29,7 +29,7 @@ pip install -U pip
 pip install .
 ```
 
-After that, you can start the server with `jupyter notebook`
+After that, you can start the server with `jupyter lab`
 
 ### uv
 
