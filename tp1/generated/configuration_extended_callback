@@ -1,3 +1,0 @@
-def callback_9(ps):
-    display_9(ps)
-    time.sleep(0.5)
