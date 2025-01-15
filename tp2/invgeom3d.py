@@ -1,10 +1,10 @@
 """
-Stand-alone inverse geom in 3D (translation only). Given a reference translation <target>,
-it computes the configuration of the UR5 so that the end-effector position (3D)
-matches the target. This is done using BFGS solver. While iterating to compute
-the optimal configuration, the script also display the successive candidate
-solution, hence moving the robot from the initial guess configuaration to the
-reference target.
+Stand-alone inverse geom in 3D (translation only). Given a reference
+translation <target>, it computes the configuration of the UR5 so that the
+end-effector position (3D) matches the target. This is done using BFGS
+solver. While iterating to compute the optimal configuration, the script also
+display the successive candidate solution, hence moving the robot from the
+initial guess configuaration to the reference target.
 """
 
 import time
@@ -14,6 +14,7 @@ import example_robot_data as robex
 import numpy as np
 from numpy.linalg import norm
 from scipy.optimize import fmin_bfgs
+
 from supaero2025.meshcat_viewer_wrapper import MeshcatVisualizer
 
 # --- Load robot model

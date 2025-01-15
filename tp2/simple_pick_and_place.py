@@ -14,7 +14,8 @@ import unittest
 import example_robot_data as robex
 import numpy as np
 import pinocchio as pin
-from supaero2024.meshcat_viewer_wrapper import MeshcatVisualizer, colors
+
+from supaero2025.meshcat_viewer_wrapper import MeshcatVisualizer, colors
 
 # %jupyter_snippet 1
 robot = robex.load("ur5")

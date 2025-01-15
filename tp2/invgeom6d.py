@@ -16,6 +16,7 @@ import numpy as np
 import pinocchio as pin
 from numpy.linalg import norm
 from scipy.optimize import fmin_bfgs
+
 from supaero2025.meshcat_viewer_wrapper import MeshcatVisualizer
 
 # --- Load robot model
