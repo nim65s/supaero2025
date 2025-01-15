@@ -16,7 +16,7 @@ import example_robot_data as robex
 import numpy as np
 from numpy.linalg import norm
 from scipy.optimize import fmin_bfgs
-from supaero2024.meshcat_viewer_wrapper import MeshcatVisualizer
+from supaero2025.meshcat_viewer_wrapper import MeshcatVisualizer
 
 # --- Load robot model
 # Solo12 is a quadruped robot. Its configuration is composed of:

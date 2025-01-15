@@ -8,8 +8,8 @@ import numpy as np
 import pinocchio as pin
 
 # %jupyter_snippet 0
-from supaero2024.load_ur5_parallel import load_ur5_parallel
-from supaero2024.meshcat_viewer_wrapper import MeshcatVisualizer
+from supaero2025.load_ur5_parallel import load_ur5_parallel
+from supaero2025.meshcat_viewer_wrapper import MeshcatVisualizer
 
 # Load 4 Ur5 robots, placed at 0.3m from origin in the 4 directions x,y,-x,-y.
 robot = load_ur5_parallel()
