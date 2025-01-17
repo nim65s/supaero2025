@@ -14,7 +14,8 @@ import numpy as np
 # %jupyter_snippet import
 import pinocchio as pin
 from numpy.linalg import norm, pinv
-from supaero2024.meshcat_viewer_wrapper import MeshcatVisualizer
+
+from supaero2025.meshcat_viewer_wrapper import MeshcatVisualizer
 from tp3.tiago_loader import loadTiago
 
 # %end_jupyter_snippet
