@@ -1,2 +1,0 @@
-robot = loadTiago(addGazeFrame=True)
-viz = MeshcatVisualizer(robot)
