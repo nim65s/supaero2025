@@ -1,2 +1,0 @@
-# Build the viewer add-on to display the witnesses.
-mcWitnesses = DisplayCollisionWitnessesInMeshcat(viz)

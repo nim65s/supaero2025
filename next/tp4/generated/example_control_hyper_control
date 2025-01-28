@@ -1,3 +1,0 @@
-# Hyperparameters for the control
-Kp = 50.0  # proportional gain (P of PD)
-Kv = 2 * np.sqrt(Kp)  # derivative gain (D of PD)

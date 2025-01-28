@@ -1,2 +1,0 @@
-tauq = np.random.rand(model.nv)*2-1
-aq = np.linalg.inv(M) @ (tauq - b)
