@@ -5,7 +5,7 @@ import warnings
 import hppfcl
 import numpy as np
 import pinocchio as pin
-from supaero2024.hppfcl_utils import load_hppfcl_convex_from_stl_file
+from supaero2025.hppfcl_utils import load_hppfcl_convex_from_stl_file
 from tp4.robot_hand import RobotHand
 
 
@@ -49,7 +49,7 @@ def buildScenePillsBox(
     # ###
     # Sample objects with the following classes.
     shapes = [
-        load_hppfcl_convex_from_stl_file("supaero2024/share/mesh.stl"),
+        # load_hppfcl_convex_from_stl_file("supaero2025/share/mesh.stl"),
         hppfcl.Ellipsoid(0.05, 0.15, 0.2),
         hppfcl.Capsule(0.1, 0.2),
     ]
@@ -339,6 +339,7 @@ def buildSceneCubes(
 
         # Add cube visual
         shape = hppfcl.Box(size, size, size)
+        print(shape)
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             geom_box = pin.GeometryObject(
@@ -561,13 +562,13 @@ class MyTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    from supaero2024.meshcat_viewer_wrapper import MeshcatVisualizer
+    from supaero2025.meshcat_viewer_wrapper import MeshcatVisualizer
 
     # %jupyter_snippet pills
     model, geom_model = buildScenePillsBox(
         seed=2, nobj=30, wall_size=2.0, one_of_each=True
     )
-    visual_model = geom_model.copy()
+    visual_model = geom_model.copy()    
     viz = MeshcatVisualizer(
         model=model, collision_model=geom_model, visual_model=geom_model
     )

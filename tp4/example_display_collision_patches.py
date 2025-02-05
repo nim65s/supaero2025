@@ -18,7 +18,7 @@ from display_collision_patches import (
     updateVisualObjects,
 )
 from scenes import buildSceneThreeBodies
-from supaero2024.meshcat_viewer_wrapper import MeshcatVisualizer
+from supaero2025.meshcat_viewer_wrapper import MeshcatVisualizer
 
 # Build a scene
 model, geom_model = buildSceneThreeBodies()

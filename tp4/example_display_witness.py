@@ -6,7 +6,7 @@ import time
 
 import numpy as np
 import pinocchio as pin
-from supaero2024.meshcat_viewer_wrapper import MeshcatVisualizer
+from supaero2025.meshcat_viewer_wrapper import MeshcatVisualizer
 from tp4.display_witness import DisplayCollisionWitnessesInMeshcat
 from tp4.scenes import buildSceneThreeBodies
 

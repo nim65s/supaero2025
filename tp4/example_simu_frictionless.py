@@ -5,7 +5,7 @@ import pinocchio as pin
 from create_rigid_contact_models_for_hppfcl import createContactModelsFromCollisions
 from display_collision_patches import preallocateVisualObjects, updateVisualObjects
 from scenes import buildSceneCubes
-from supaero2024.meshcat_viewer_wrapper import MeshcatVisualizer
+from supaero2025.meshcat_viewer_wrapper import MeshcatVisualizer
 from tp4.compatibility import P3X
 
 import proxsuite

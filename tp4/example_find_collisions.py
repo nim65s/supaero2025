@@ -1,5 +1,5 @@
 import pinocchio as pin
-from supaero2024.meshcat_viewer_wrapper import MeshcatVisualizer
+from supaero2025.meshcat_viewer_wrapper import MeshcatVisualizer
 from tp4.scenes import buildSceneThreeBodies
 
 # Build a scene

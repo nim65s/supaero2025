@@ -127,7 +127,7 @@ def createContactModelsFromDistances(model, data, geom_model, geom_data, thresho
 
 
 if __name__ == "__main__":
-    from supaero2024.meshcat_viewer_wrapper import MeshcatVisualizer
+    from supaero2025.meshcat_viewer_wrapper import MeshcatVisualizer
     from tp4.scenes import buildSceneThreeBodies
 
     model, geom_model = buildSceneThreeBodies()
