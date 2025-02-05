@@ -55,14 +55,13 @@ viz.display(q)
 v = (np.random.rand(model.nv) * 2 - 1) * 1e-3
 r0 = [np.linalg.norm(q[7 * i : 7 * i + 3]) for i in range(model.nq // 7)]
 
-# Place the patches based on distances or collisions?
+# Place the patches based on distances or collisions? The visual result should be the same.
 USE_DISTANCE = False
 
 for t in range(100):
     q = pin.integrate(model, q, v * 10)
     for i in range(model.nq // 7):
         q[7 * i : 7 * i + 3] *= r0[i] / np.linalg.norm(q[7 * i : 7 * i + 3])
-    viz.display(q)
 
     if USE_DISTANCE:
         # The patches are on the contact surface
@@ -72,7 +71,7 @@ for t in range(100):
         )
     else:
         # With p3x, the patches are in between the two surfaces
-        pin.computeCollisions(model, data, geom_model, geom_data, q, True)
+        pin.computeCollisions(model, data, geom_model, geom_data, q)
         contact_models = createContactModelsFromCollisions(
             model, data, geom_model, geom_data
         )
