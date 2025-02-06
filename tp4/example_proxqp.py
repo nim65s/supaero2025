@@ -40,7 +40,7 @@ NX = 20  # x dimension (search space)
 NEQ = 5  # number of equalities
 NINEQ = 3  # Number of inequalities
 WITH_BOUNDS = True  # Additional bounds on x
-VERBOSE = False  # Do you want to see the result?
+VERBOSE = True  # Do you want to see the result?
 ACCURACY = 1e-6  # Threshold for solver stoping criteria and posterior checks
 # %end_jupyter_snippet
 

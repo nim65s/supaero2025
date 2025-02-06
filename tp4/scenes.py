@@ -161,7 +161,6 @@ def addFloor(
     for ig, g in enumerate(geom_model.geometryObjects):
         if g.name != "floor":
             geom_model.addCollisionPair(pin.CollisionPair(ig, ifloor))
-            # geom_model.addCollisionPair(pin.CollisionPair(ifloor,ig))
 
 
 def addBox(

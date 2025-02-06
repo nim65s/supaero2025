@@ -19,12 +19,12 @@ DT_VISU = 1 / 100
 T = int(DURATION / DT)  # number of time steps
 WITH_CUBE_CORNERS = True  # Use contacts only at cube corners
 PRIMAL_FORMULATION = True
-DUAL_FORMULATION = True
+DUAL_FORMULATION = False
 assert PRIMAL_FORMULATION or DUAL_FORMULATION
 # Random seed for simulation initialization
 SEED = int(time.time() % 1 * 1000)
-print("SEED = ", SEED)
 SEED = 1
+print("SEED = ", SEED)
 
 # ### RANDOM INIT
 # Init random generators
@@ -35,7 +35,7 @@ pin.seed(SEED)
 # ### SCENE
 # Create scene with multiple objects
 model, geom_model = buildSceneCubes(
-    1, with_floor=True, with_corner_collisions=True, with_cube_collisions=False
+    3, with_floor=True, with_corner_collisions=True, with_cube_collisions=True
 )
 
 # Create the corresponding data to the models
@@ -48,7 +48,7 @@ for req in geom_data.collisionRequests:
 
 # ### VIZUALIZATION
 visual_model = geom_model.copy()
-preallocateVisualObjects(visual_model, 10)
+preallocateVisualObjects(visual_model, 16)
 viz = MeshcatVisualizer(
     model=model, collision_model=geom_model, visual_model=visual_model
 )
@@ -111,8 +111,8 @@ for t in range(T):
             # min_v  .5 vMv - vfMv st Jv>=0
             qp1 = QP(model.nv, 0, nc, False)
             qp1.init(
-                data.M, -data.M @ vf, [], [], J, l=np.zeros(nc)
-            )  # ,u=np.ones(nc)*1e20)
+                H=data.M, g=-data.M @ vf, A=None, b=None, C=J, l=np.zeros(nc)
+            )
             qp1.settings.eps_abs = 1e-12
             qp1.solve()
 

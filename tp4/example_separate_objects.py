@@ -1,3 +1,14 @@
+'''
+Integrative example using the collision model.
+Load a complex scene (pills box), then iteratively applies an ad-hoc
+repulsive field to each pair of objects that are colliding. The script
+then converges to a collision free scene, with distance margin.
+The movement of the scene is displayed in meshcat in real-time.
+The convergence of the distances of each collision pair with negative 
+(colliding) distances is finally plot.
+'''
+
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pinocchio as pin
@@ -117,6 +128,9 @@ for i in range(NB_ITER):
 
     # Finally, modify the current config q with the push dq
     q = pin.integrate(model, q, dq)
+
+    print(f'Iteration #{i}/{NB_ITER}: {len(contact_models)} active collision '
+          +f'pairs (given margin {EPSILON})')
 
     # Display the current configuration
     if i % 10 == 0:
