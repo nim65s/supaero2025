@@ -6,7 +6,6 @@ from create_rigid_contact_models_for_hppfcl import createContactModelsFromCollis
 from display_collision_patches import preallocateVisualObjects, updateVisualObjects
 from scenes import buildSceneCubes
 from supaero2025.meshcat_viewer_wrapper import MeshcatVisualizer
-from tp4.compatibility import P3X
 
 import proxsuite
 
@@ -19,7 +18,7 @@ DT_VISU = 1 / 100
 T = int(DURATION / DT)  # number of time steps
 WITH_CUBE_CORNERS = True  # Use contacts only at cube corners
 PRIMAL_FORMULATION = True
-DUAL_FORMULATION = False
+DUAL_FORMULATION = True
 assert PRIMAL_FORMULATION or DUAL_FORMULATION
 # Random seed for simulation initialization
 SEED = int(time.time() % 1 * 1000)
@@ -34,9 +33,7 @@ pin.seed(SEED)
 # %jupyter_snippet init
 # ### SCENE
 # Create scene with multiple objects
-model, geom_model = buildSceneCubes(
-    3, with_floor=True, with_corner_collisions=True, with_cube_collisions=True
-)
+model, geom_model = buildSceneCubes(3)
 
 # Create the corresponding data to the models
 data = model.createData()
@@ -45,6 +42,7 @@ geom_data = geom_model.createData()
 for req in geom_data.collisionRequests:
     req.security_margin = 1e-3
     req.num_max_contacts = 20
+    req.enable_contact = True
 
 # ### VIZUALIZATION
 visual_model = geom_model.copy()
@@ -139,9 +137,7 @@ for t in range(T):
             # ### DUAL FORMULATION
             # Solve the dual QP (search the forces)
             # min_f .5 f D f st f>=0, D f + J vf >= 0
-            # Compatibility issue: the 3rd argument is to enforce compatibility between
-            # pinocchio 2x and 3x. Remove it if with P3X, or replace it by q if with P2X.
-            Minv = pin.computeMinverse(model, data, None if P3X else q)
+            Minv = pin.computeMinverse(model, data)
             delasus = J @ Minv @ J.T
 
             qp2 = QP(nc, 0, nc, box_constraints=True)

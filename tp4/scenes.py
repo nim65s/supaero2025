@@ -266,10 +266,10 @@ def buildSceneCubes(
     number_of_cubes,
     sizes=0.2,
     masses=1.0,
-    with_corner_collisions=True,
-    with_cube_collisions=False,
-    with_floor=False,
-    corner_insider_the_cube=True,
+    with_corner_collisions=False,
+    with_cube_collisions=True,
+    with_floor=True,
+    corner_inside_the_cube=True,
 ):
     """Creates the pinocchio pin.Model and pin.GeometryModel
     of a scene containing cubes. The number of cubes is defines by the length of
@@ -295,7 +295,7 @@ def buildSceneCubes(
 
         with_cube_collisions: add collision pairs between cubes. False by defaults (why?).
 
-        corner_insider_the_cube: added for compatibility with previous code. True by default.
+        corner_inside_the_cube: added for compatibility with previous code. True by default.
 
     Returns:
         model, geom_model
@@ -361,7 +361,7 @@ def buildSceneCubes(
         # Could be reset to a more classical order to avoid confusion later.
         corners = [
             np.array([x, y, z])
-            * (size / 2 - (ballSize if corner_insider_the_cube else 0))
+            * (size / 2 - (ballSize if corner_inside_the_cube else 0))
             for x in [1, -1]
             for z in [-1, 1]
             for y in [-1, 1]
