@@ -2,12 +2,12 @@ import time
 
 import numpy as np
 import pinocchio as pin
+import proxsuite
 from create_rigid_contact_models_for_hppfcl import createContactModelsFromCollisions
 from display_collision_patches import preallocateVisualObjects, updateVisualObjects
 from scenes import buildSceneCubes
-from supaero2025.meshcat_viewer_wrapper import MeshcatVisualizer
 
-import proxsuite
+from supaero2025.meshcat_viewer_wrapper import MeshcatVisualizer
 
 QP = proxsuite.proxqp.dense.QP
 
@@ -108,9 +108,7 @@ for t in range(T):
             # Solve the primal QP (search the velocity)
             # min_v  .5 vMv - vfMv st Jv>=0
             qp1 = QP(model.nv, 0, nc, False)
-            qp1.init(
-                H=data.M, g=-data.M @ vf, A=None, b=None, C=J, l=np.zeros(nc)
-            )
+            qp1.init(H=data.M, g=-data.M @ vf, A=None, b=None, C=J, l=np.zeros(nc))
             qp1.settings.eps_abs = 1e-12
             qp1.solve()
 
@@ -122,7 +120,7 @@ for t in range(T):
             # Check the solution respects the physics
             assert np.all(forces >= -1e-6)
             assert np.all(J @ vnext >= -1e-6)
-            assert abs(forces @ J @ vnext) < 1e-6
+            assert np.allclose(forces * (J @ vnext), 0)
             # Check the acceleration obtained from the forces
             assert np.allclose(
                 pin.aba(model, data, q, v, tau + J.T @ forces / DT),
@@ -140,15 +138,15 @@ for t in range(T):
             Minv = pin.computeMinverse(model, data)
             delasus = J @ Minv @ J.T
 
-            qp2 = QP(nc, 0, nc, box_constraints=True)
+            qp2 = QP(nc, 0, 0, box_constraints=True)
             qp2.settings.eps_abs = 1e-12
             # Both side of the box constraint must be given
             # otherwise the behavior of the solver is strange
             qp2.init(
                 H=delasus,
-                g=np.zeros(nc),
-                C=delasus,
-                l=-J @ vf,
+                g=J @ vf,
+                C=None,
+                l=None,
                 l_box=np.zeros(nc),
                 u_box=np.ones(nc) * np.inf,
             )
@@ -161,7 +159,10 @@ for t in range(T):
             # Check the solution respects the physics
             assert np.all(forces >= -1e-6)
             assert np.all(J @ vnext >= -1e-6)
-            assert abs(forces @ J @ vnext) < 1e-6
+            assert np.allclose(forces * (J @ vnext), 0)
+            assert np.allclose(qp2.results.z, -J @ vnext)
+            vnext_alt = vf + Minv @ J.T @ forces
+            assert np.allclose(vnext, vnext_alt)
             # %end_jupyter_snippet
 
         if PRIMAL_FORMULATION and DUAL_FORMULATION:

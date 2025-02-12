@@ -85,10 +85,12 @@ def createContactModelsFromCollisions(model, data, geom_model, geom_data):
         if r.numContacts() > 0:
             for c in r.getContacts():
                 OC1 = c.getNearestPoint1()  # Position of first contact point in world
-                OC2 = c.getNearestPoint2()  # Position of second contact point in world
-                # In some simu solver, it might be prefered to have the contact point in between the collisions.
-                # OC1=OC2=(OC1+OC2)/2
-                # In 2x, this is the default behavior (p1=p2=pos)
+                OC2 = c.getNearestPoint2()  # Position of second contact point
+
+                # in world In some simu solver, it might be prefered to have
+                # the contact point in between the collisions.
+                # OC1=OC2=(OC1+OC2)/2 In 2x, this is the default behavior
+                # (p1=p2=pos)
 
                 cm = _createOneConstraint(
                     model, data, geom_model, geom_data, collId, OC1, OC2, c.normal

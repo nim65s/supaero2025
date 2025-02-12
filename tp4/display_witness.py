@@ -9,6 +9,7 @@ objects are kept in meshcat to avoid additional meshcat-internal burdens.
 
 import numpy as np
 import pinocchio as pin
+
 from tp4.compatibility import HPPFCL3X
 
 
@@ -54,18 +55,19 @@ class DisplayCollisionWitnessesInMeshcat:
         We then arbitrarily defines the initial line with points a0,b0 (a0=0,0,0
         and b0=1,0,0 -- using a0=0 but any ||b0||=1 is acceptable).
 
-        Then, if willing to display the line between p1 and p2 (with arbitrary coordinates
-        different from a0,b0), we need to choose M=[R p] such that:
-        M [a0 b0 ] = [ p1 p2 ]
-          [1  1  ]   [ 1  1  ]
+        Then, if willing to display the line between p1 and p2 (with arbitrary
+        coordinates different from a0,b0), we need to choose M=[R p] such that:
+        M [a0 b0 ] = [ p1 p2 ] [1 1 ] [ 1 1 ]
 
-        Obviously M=[R p] will not correspond to R being a rotation matrix, but this is not
-        a problem for meshcat (indeed, we cannot expect M \in SE3 to shift a0,b0 to A,B, as the
-        distances are not going to be the same in general, so R has to be not a rotation matrix).
+        Obviously M=[R p] will not correspond to R being a rotation matrix, but
+        this is not a problem for meshcat (indeed, we cannot expect M \in SE3
+        to shift a0,b0 to A,B, as the distances are not going to be the same in
+        general, so R has to be not a rotation matrix).
 
         We then chose p=p1 (using a0=0), and R=d.R'
         with d=||p1-p2|| the distance between the witnesses and
         R' the rotation matrix such that R'b0=n=(p2-p1)/d.
+
         """
         n = f"wit_{idx_col}_1"
         self.viz.applyConfiguration(n, p1.tolist() + [1, 0, 0, 0])

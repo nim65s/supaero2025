@@ -6,12 +6,13 @@ The contact models are typically created from the collision/distance results of
 hppfcl, e.g. using create_rigid_contact_models_for_hppfcl.
 
 The file implements 2 main methods:
-- preallocateVisualObjects: add visual objects to render the collision, as small red
-disks "collision patches" on both side of the collision (on each objects of the collision
-pairs). These objects are pre-defined in advance, and you must specify in advance the max number
-of colpatch
-- updateVisualObjects: move the collision patches in the visual model. If the visualizer
-is provided, also automatically hide the unecessary patches.
+
+- preallocateVisualObjects: add visual objects to render the collision, as
+small red disks "collision patches" on both side of the collision (on each
+objects of the collision pairs). These objects are pre-defined in advance, and
+you must specify in advance the max number of colpatch
+- updateVisualObjects: move the collision patches in the visual model. If the
+visualizer is provided, also automatically hide the unecessary patches.
 
 """
 
@@ -53,8 +54,9 @@ def _createVisualObjects(visual_model, ncolpatch, verbose=False):
 
 def _whatIsMyVisualizer(visualizer):
     """
-    Return a string defining the type of visualizer (none, meshcat, possibly gepettoviewer in the
-    future).
+    Return a string defining the type of visualizer (none, meshcat, possibly
+    gepettoviewer in the future).
+
     """
     if visualizer is None:
         return "none"
@@ -100,7 +102,8 @@ def _meshcat_hideColPatches(
                 except ValueError:
                     print(f"Unexpected error with the colpatch name {g.name} ")
                     print(
-                        f"It was expected to follow the template {COLPATCH_TEMPLATE_NAME}"
+                        "It was expected to follow the template "
+                        + f"{COLPATCH_TEMPLATE_NAME}"
                     )
                     continue
 
@@ -126,11 +129,12 @@ def updateVisualObjects(
     model, data, contact_models, contact_datas, visual_model, visualizer=None
 ):
     """
-    Take the contact models list(pin.RigidConstraintModels) and update the placement
-    of the visual objects in visual_model.
-    In addition, it can hide the objects that are not useful, but this action is specific
-    to the viewer and needs you to also pass the viewer (only for meshcat for now, but
+    Take the contact models list(pin.RigidConstraintModels) and update the
+    placement of the visual objects in visual_model.  In addition, it can hide
+    the objects that are not useful, but this action is specific to the viewer
+    and needs you to also pass the viewer (only for meshcat for now, but
     implementing it for Gepetto-viewer would be easy).
+
     """
     ic = -1
     for ic, [cmodel, cdata] in enumerate(zip(contact_models, contact_datas)):

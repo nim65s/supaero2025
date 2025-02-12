@@ -1,8 +1,10 @@
 """
-This file collects a bunch of helpers to make the transition between pinocchio2.7/hppfcl2.4
-and pinocchio3x/hppfcl3x (version 2.99 and future).
+This file collects a bunch of helpers to make the transition between
+pinocchio2.7/hppfcl2.4 and pinocchio3x/hppfcl3x (version 2.99 and future).
 - pin.GeometryModel as reversed init API
 - normals are opposite in hppfcl
+
+Should be deprecated now, can be removed.
 """
 
 import warnings
@@ -18,7 +20,7 @@ HPPFCL3X = hppfcl.__version__.split(".")[1] == "99"
 P3X = [int(n) for n in pin.__version__.split(".")] >= [2, 99]
 HPPFCL3X = [int(n) for n in hppfcl.__version__.split(".")] >= [2, 99]
 
-assert(P3X and HPPFCL3X)
+assert P3X and HPPFCL3X
 
 # -------------------------------------------------------------------------------
 if not P3X:
@@ -48,7 +50,7 @@ if not HPPFCL3X:
         p1p2 = res.getNearestPoint2() - res.getNearestPoint1()
         normal = oMg2.rotation @ g2.geometry.n
         assert np.allclose(np.cross(p1p2, normal), 0)
-        # res.normal = -normal if d.min_distance<0 else normal #np.dot(p1p2,normal)>=0 else -normal
+        # res.normal = -normal if d.min_distance<0 else normal
         res.normal = -normal
 
     def computeDistances(model, data, geometry_model, geometry_data, q):
@@ -108,7 +110,8 @@ if not HPPFCL3X:
                     print("# Poor patch, not working in penetration", ip, sh1, sh2)
                     msg = (
                         f"Setting normals from witness segment (pair {ip} "
-                        + f"{type(sh1)}-{type(sh2)}) ### Poor patch, not working in penetration"
+                        + f"{type(sh1)}-{type(sh2)}) ### Poor patch, "
+                        + "not working in penetration"
                     )
                     warnings.warn(msg, category=UserWarning, stacklevel=2)
                     witness = d.getNearestPoint2() - d.getNearestPoint1()

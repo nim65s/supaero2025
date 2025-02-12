@@ -18,6 +18,7 @@ from display_collision_patches import (
     updateVisualObjects,
 )
 from scenes import buildSceneThreeBodies
+
 from supaero2025.meshcat_viewer_wrapper import MeshcatVisualizer
 
 # Build a scene
@@ -55,7 +56,8 @@ viz.display(q)
 v = (np.random.rand(model.nv) * 2 - 1) * 1e-3
 r0 = [np.linalg.norm(q[7 * i : 7 * i + 3]) for i in range(model.nq // 7)]
 
-# Place the patches based on distances or collisions? The visual result should be the same.
+# Place the patches based on distances or collisions? The visual result should
+# be the same.
 USE_DISTANCE = False
 
 for t in range(100):

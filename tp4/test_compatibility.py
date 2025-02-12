@@ -9,6 +9,8 @@ from compatibility import (
     _getConstraintsJacobian,
 )
 
+from tp4.scenes import buildSceneThreeBodies
+
 ### TEST ZONE ############################################################
 ### This last part is to automatically validate the versions of this example.
 
@@ -17,8 +19,6 @@ class TestJconstraint(unittest.TestCase):
     def test_j6d(self):
         pass
 
-
-from tp4.scenes import buildSceneThreeBodies
 
 model, gmodel = buildSceneThreeBodies()
 data = model.createData()

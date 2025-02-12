@@ -5,7 +5,7 @@ import warnings
 import hppfcl
 import numpy as np
 import pinocchio as pin
-from supaero2025.hppfcl_utils import load_hppfcl_convex_from_stl_file
+
 from tp4.robot_hand import RobotHand
 
 
@@ -26,11 +26,14 @@ def buildScenePillsBox(
     - wall_size (float): The size of the walls of the box (default is 4.0).
     - seed (int): Seed value for random number generation (default is 0).
     - no_walls (bool): If True, no box is added (default is False).
-    - one_of_each (bool): If True, only one object of each type (ellipsoid, capsule, weird-shape)
-    will be generated in turn (1,2,3,1,2,3,...) (default is False).
+    - one_of_each (bool): If True, only one object of each type (ellipsoid,
+    capsule, weird-shape) will be generated in turn (1,2,3,1,2,3,...) (default
+    is False).
 
     Returns:
-    - scene: A generated scene containing the specified number of pill-shaped objects within a box.
+    - scene: A generated scene containing the specified number of pill-shaped
+    objects within a box.
+
     """
     SEED = seed
     NOBJ = nobj
@@ -97,11 +100,11 @@ def buildScenePillsBox(
         geom_model.addGeometryObject(geom)
         # Add inertia
         volum = shape.computeVolume()
-        I = shape.computeMomentofInertia()
+        I3 = shape.computeMomentofInertia()
         density = 700  # kg/m3 = wood
         model.appendBodyToJoint(
             jid,
-            pin.Inertia(volum * density, np.zeros(3), I * density),
+            pin.Inertia(volum * density, np.zeros(3), I3 * density),
             pin.SE3.Identity(),
         )
 
@@ -143,10 +146,11 @@ def addFloor(
     Parameters:
     - geom_model: The geometric model of the scene to which the floor will be added.
     - altitude (float): The altitude of the floor (default is 0).
-    - addCollisionPairs (bool): If True, collision pairs will be added for the floor with all the other
-    objects already in the scene (default is True).
-    - color (numpy.ndarray): The color of the floor in RGBA format (default is np.array([0.9, 0.6, 0., .20]))
-    with RGB-transparency syntax.
+    - addCollisionPairs (bool): If True, collision pairs will be added for the
+    floor with all the other objects already in the scene (default is True).
+    - color (numpy.ndarray): The color of the floor in RGBA format (default is
+    np.array([0.9, 0.6, 0., .20])) with RGB-transparency syntax.
+
     """
     shape = hppfcl.Halfspace(np.array([0, 0, 1.0]), 0)
     M = pin.SE3.Identity()
@@ -171,11 +175,15 @@ def addBox(
     This box is typically though to come outside of a previously defined object set.
 
     Parameters:
+
     - geom_model: The geometric model of the scene to which the box will be added.
     - wall_size (float): The size of each wall of the box (default is 4.0).
-    - color (numpy.ndarray): The color of the box walls in RGBA format (default is np.array([1, 1, 1, 0.2])).
-    - transparency (float or None): The transparency of the box walls (default is None). If both color and
-    transparency are set, the last component of the color will be ignored.
+    - color (numpy.ndarray): The color of the box walls in RGBA format (default
+      is np.array([1, 1, 1, 0.2])).
+    - transparency (float or None): The transparency of the box walls (default
+    is None). If both color and transparency are set, the last component of the
+    color will be ignored.
+
     """
     WALL_SIZE = wall_size
     WALL_THICKNESS = WALL_SIZE * 0.05
@@ -271,12 +279,12 @@ def buildSceneCubes(
     with_floor=True,
     corner_inside_the_cube=True,
 ):
-    """Creates the pinocchio pin.Model and pin.GeometryModel
-    of a scene containing cubes. The number of cubes is defines by the length of
-    the two lists in argument.
-    The cubes can be augmented with 8 small spheres corresponding to the corners.
-    In that case, the collisions with the cube geometries are disable, and only the collisions
-    between sphere is active.
+    """
+    Creates the pinocchio pin.Model and pin.GeometryModel of a scene containing
+    cubes. The number of cubes is defines by the length of the two lists in
+    argument.  The cubes can be augmented with 8 small spheres corresponding to
+    the corners.  In that case, the collisions with the cube geometries are
+    disable, and only the collisions between sphere is active.
 
     Args:
 
@@ -290,12 +298,15 @@ def buildSceneCubes(
 
     option args:
 
-        with_corner_collisions: add balls to the corner of the cube and only enable collision
-        checks between these additional balls. True by default.
+        with_corner_collisions: add balls to the corner of the cube and only
+        enable collision checks between these additional balls. True by
+        default.
 
-        with_cube_collisions: add collision pairs between cubes. False by defaults (why?).
+        with_cube_collisions: add collision pairs between cubes. False by
+        defaults (why?).
 
-        corner_inside_the_cube: added for compatibility with previous code. True by default.
+        corner_inside_the_cube: added for compatibility with previous
+        code. True by default.
 
     Returns:
         model, geom_model
@@ -496,10 +507,10 @@ def buildSceneRobotHand(with_item=False, item_size=0.05):
     geom_model_item.addGeometryObject(geom)
     # Add inertia
     volum = shape.computeVolume()
-    I = shape.computeMomentofInertia()
+    I3 = shape.computeMomentofInertia()
     density = 700  # kg/m3 = wood
     model_item.appendBodyToJoint(
-        jid, pin.Inertia(volum * density, np.zeros(3), I * density), pin.SE3.Identity()
+        jid, pin.Inertia(volum * density, np.zeros(3), I3 * density), pin.SE3.Identity()
     )
 
     # Merge both model
@@ -567,7 +578,7 @@ if __name__ == "__main__":
     model, geom_model = buildScenePillsBox(
         seed=2, nobj=30, wall_size=2.0, one_of_each=True
     )
-    visual_model = geom_model.copy()    
+    visual_model = geom_model.copy()
     viz = MeshcatVisualizer(
         model=model, collision_model=geom_model, visual_model=geom_model
     )
