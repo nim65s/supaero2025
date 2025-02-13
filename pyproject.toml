@@ -22,3 +22,6 @@ dependencies = [
     "proxsuite>=0.6.7",
     "scipy>=1.15.0",
 ]
+
+[tool.isort]
+profile = "black"
