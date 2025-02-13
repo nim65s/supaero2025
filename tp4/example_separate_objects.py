@@ -4,7 +4,7 @@ Load a complex scene (pills box), then iteratively applies an ad-hoc
 repulsive field to each pair of objects that are colliding. The script
 then converges to a collision free scene, with distance margin.
 The movement of the scene is displayed in meshcat in real-time.
-The convergence of the distances of each collision pair with negative 
+The convergence of the distances of each collision pair with negative
 (colliding) distances is finally plot.
 """
 
