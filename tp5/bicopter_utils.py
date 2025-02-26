@@ -60,7 +60,7 @@ class ViewerBicopter:
         """
         import example_robot_data as robex
         import pinocchio as pin
-        from supaero2024.meshcat_viewer_wrapper import MeshcatVisualizer
+        from supaero2025.meshcat_viewer_wrapper import MeshcatVisualizer
 
         hector = robex.load("hector")
         self.viz = MeshcatVisualizer(hector)
