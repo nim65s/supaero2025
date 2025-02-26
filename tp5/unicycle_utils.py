@@ -4,7 +4,8 @@ import numpy as np
 
 def plotUnicycle(x, pltAx):
     """
-    Plot a unicyle of a 2D matplotlib (top view), with fix-size arrows featuring the wheels.
+    Plot a unicyle of a 2D matplotlib (top view), with fix-size arrows
+    featuring the wheels.
     """
     sc, delta = 0.1, 0.1
     a, b, th = x

@@ -2,6 +2,7 @@ import unittest
 
 import crocoddyl
 import numpy as np
+
 from tp5.bicopter_utils import ViewerBicopter, plotBicopterSolution
 
 # %jupyter_snippet hyperparams
@@ -62,7 +63,7 @@ class DifferentialActionModelBicopter(crocoddyl.DifferentialActionModelAbstract)
 
     def calc(self, data, x, u=None):
         if u is None:
-            u = model.unone
+            u = self.unone
         # Getting the state and control variables
         x1, x2, th, v1, v2, w = x
         fr, fl = u

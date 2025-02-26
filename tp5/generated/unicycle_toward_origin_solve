@@ -1,2 +1,2 @@
 done = ddp.solve()
-assert(done)
+assert done

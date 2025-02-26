@@ -13,5 +13,5 @@ csolver.eps_rel = 0.0
 csolver.max_qp_iters = 10000
 
 ### SOLVE THE PROBLEM
-done = csolver.solve([x0]*(T+1), [np.zeros(2)]*T, MAX_ITER)
-assert(done)
+done = csolver.solve([x0] * (T + 1), [np.zeros(2)] * T, MAX_ITER)
+assert done

@@ -2,6 +2,7 @@ import unittest
 
 import crocoddyl
 import numpy as np
+
 from tp5.unicycle_utils import plotUnicycleSolution
 
 # %jupyter_snippet hyperparams

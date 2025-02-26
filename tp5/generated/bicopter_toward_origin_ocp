@@ -8,4 +8,4 @@ ddp.setCallbacks([crocoddyl.CallbackLogger(), crocoddyl.CallbackVerbose()])
 ### SOLVE THE PROBLEM
 
 done = ddp.solve([], [], 300)
-assert(done)
+assert done

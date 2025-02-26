@@ -1,19 +1,26 @@
 """
-In this example test, we will solve the reaching-goal task with the Panda arm.
-For that, we use the forward dynamics (with its analytical derivatives) based on Pinocchio
-and featured in the Pinocchio-based front-end implementation of Crocoddyl. The main code is
-inside the DifferentialActionModelFullyActuated class.
-We set up 3 main costs: state regularization, control regularization wrt gravity, and target reaching.
-For temporal integration, we use an Euler implicit integration scheme.
+In this example test, we will solve the reaching-goal task with the Panda
+arm.  For that, we use the forward dynamics (with its analytical derivatives)
+based on Pinocchio and featured in the Pinocchio-based front-end implementation
+of Crocoddyl. The main code is inside the DifferentialActionModelFullyActuated
+class.  We set up 3 main costs: state regularization, control regularization
+wrt gravity, and target reaching.  For temporal integration, we use an Euler
+implicit integration scheme.
 
-This example is based on https://github.com/Gepetto/supaero2023/blob/main/tp5/arm_example.py
+This example is based on
+https://github.com/Gepetto/supaero2023/blob/main/tp5/arm_example.py
+
 """
+
+import unittest
 
 # %jupyter_snippet import
 import crocoddyl
 import example_robot_data as robex
 import numpy as np
 import pinocchio as pin
+
+from supaero2025.meshcat_viewer_wrapper import MeshcatVisualizer
 
 # %end_jupyter_snippet
 
@@ -39,7 +46,6 @@ REACH_DIMENSION = "3d"  # "6d"
 
 # Configure viewer to vizualize the robot and a green box to feature the goal placement.
 # %jupyter_snippet viz
-from supaero2025.meshcat_viewer_wrapper import MeshcatVisualizer
 
 viz = MeshcatVisualizer(robot)
 viz.display(robot.q0)
@@ -57,13 +63,16 @@ robot_model.q0 = robot.q0.copy()
 robot_model.x0 = np.concatenate([robot_model.q0, np.zeros(robot_model.nv)])
 # %end_jupyter_snippet
 
-# Define the state to be x=(q,v) position and velocity of the robot in the configuration space.
+# Define the state to be x=(q,v) position and velocity of the robot in the
+# configuration space.
 # %jupyter_snippet state
 state = crocoddyl.StateMultibody(robot_model)
 # %end_jupyter_snippet
 
-# Define the cost to be the sum of 3 terms: state regularisation xReg, control regularization uReg,
-# and end-effector reaching. We create a special value for the terminal cost.
+# Define the cost to be the sum of 3 terms: state regularisation xReg, control
+# regularization uReg, and end-effector reaching. We create a special value for
+# the terminal cost.
+
 # %jupyter_snippet sumofcosts
 runningCostModel = crocoddyl.CostModelSum(state)
 terminalCostModel = crocoddyl.CostModelSum(state)
@@ -98,7 +107,8 @@ terminalCostModel.addCost("gripperPose", goalTrackingCost, 4)
 # Cost for state regularization || x - x* ||**2
 # We set up different values for the integral cost and terminal cost term.
 
-# Regularization is stronger on position than velocity (to account for typical unit scale)
+# Regularization is stronger on position than velocity (to account for typical
+# unit scale)
 xRegWeights = crocoddyl.ActivationModelWeightedQuad(
     np.array([1, 1, 1, 1, 1, 1, 1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1])
 )
@@ -130,7 +140,8 @@ runningCostModel.addCost("uReg", uRegCost, 1e-5)
 
 # The actuation model is here trivial: tau_q = u.
 actuationModel = crocoddyl.ActuationModelFull(state)
-# Running model composing the costs, the differential equations of motion and the integrator.
+# Running model composing the costs, the differential equations of motion and
+# the integrator.
 runningModel = crocoddyl.IntegratedActionModelEuler(
     crocoddyl.DifferentialActionModelFreeFwdDynamics(
         state, actuationModel, runningCostModel
@@ -197,7 +208,6 @@ viz.play([x[: robot.model.nq] for x in ddp.xs], TIME_STEP)
 
 ### TEST ZONE ############################################################
 ### This last part is to automatically validate the versions of this example.
-import unittest
 
 
 class LocalTest(unittest.TestCase):

@@ -1,13 +1,18 @@
 """
-In this example test, we will solve the reaching-goal task with the Panda arm.
-For that, we use the forward dynamics (with its analytical derivatives) based on Pinocchio
-and featured in the Pinocchio-based front-end implementation of Crocoddyl. The main code is
-inside the DifferentialActionModelFullyActuated class.
-We set up 3 main costs: state regularization, control regularization wrt gravity, and target reaching.
-For temporal integration, we use an Euler implicit integration scheme.
+In this example test, we will solve the reaching-goal task with the Panda
+arm.  For that, we use the forward dynamics (with its analytical derivatives)
+based on Pinocchio and featured in the Pinocchio-based front-end implementation
+of Crocoddyl. The main code is inside the DifferentialActionModelFullyActuated
+class.  We set up 3 main costs: state regularization, control regularization
+wrt gravity, and target reaching.  For temporal integration, we use an Euler
+implicit integration scheme.
 
-This example is based on https://github.com/Gepetto/supaero2023/blob/main/tp5/arm_example.py
+This example is based on
+https://github.com/Gepetto/supaero2023/blob/main/tp5/arm_example.py
+
 """
+
+import unittest
 
 import crocoddyl
 import example_robot_data as robex
@@ -15,6 +20,8 @@ import matplotlib.pylab as plt
 import mim_solvers
 import numpy as np
 import pinocchio as pin
+
+from supaero2025.meshcat_viewer_wrapper import MeshcatVisualizer
 
 # First, let's load the Pinocchio model for the Panda arm.
 robot = robex.load("panda")
@@ -38,9 +45,8 @@ X_WALL_LOWER = 0.25
 X_WALL_UPPER = 0.35
 # %end_jupyter_snippet
 
-# Configure viewer to vizualize the robot and a green box to feature the goal placement.
-from supaero2025.meshcat_viewer_wrapper import MeshcatVisualizer
-
+# Configure viewer to vizualize the robot and a green box to feature the goal
+# placement.
 viz = MeshcatVisualizer(robot)
 viz.display(robot.q0)
 viz.addBox("world/goal", [0.1, 0.1, 0.1], [0, 1, 0, 1])
@@ -54,11 +60,13 @@ robot_model.armature = (
 robot_model.q0 = robot.q0.copy()
 robot_model.x0 = np.concatenate([robot_model.q0, np.zeros(robot_model.nv)])
 
-# Define the state to be x=(q,v) position and velocity of the robot in the configuration space.
+# Define the state to be x=(q,v) position and velocity of the robot in the
+# configuration space.
 state = crocoddyl.StateMultibody(robot_model)
 
-# Define the cost to be the sum of 3 terms: state regularisation xReg, control regularization uReg,
-# and end-effector reaching. We create a special value for the terminal cost.
+# Define the cost to be the sum of 3 terms: state regularisation xReg, control
+# regularization uReg, and end-effector reaching. We create a special value for
+# the terminal cost.
 runningCostModel = crocoddyl.CostModelSum(state)
 terminalCostModel = crocoddyl.CostModelSum(state)
 
@@ -88,7 +96,8 @@ terminalCostModel.addCost("gripperPose", goalTrackingCost, 4)
 # Cost for state regularization || x - x* ||**2
 # We set up different values for the integral cost and terminal cost term.
 
-# Regularization is stronger on position than velocity (to account for typical unit scale)
+# Regularization is stronger on position than velocity (to account for typical
+# unit scale)
 xRegWeights = crocoddyl.ActivationModelWeightedQuad(
     np.array([1, 1, 1, 1, 1, 1, 1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1])
 )
@@ -97,7 +106,8 @@ xRegCost = crocoddyl.CostModelResidual(state, xRegWeights, xRegRes)
 runningCostModel.addCost("xReg", xRegCost, 1e-2)
 
 # Terminal cost for state regularization || x - x* ||**2
-# Require more strictly a small velocity at task end (but we don't car for the position)
+# Require more strictly a small velocity at task end (but we don't car
+# for the position)
 xRegWeightsT = crocoddyl.ActivationModelWeightedQuad(
     np.array([0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0])
 )
@@ -138,7 +148,8 @@ runningConstraints.addConstraint("ee_wall", eeWallContraint)
 
 # The actuation model is here trivial: tau_q = u.
 actuationModel = crocoddyl.ActuationModelFull(state)
-# Running model composing the costs, the differential equations of motion and the integrator.
+# Running model composing the costs, the differential equations of motion and
+# the integrator.
 runningModel = crocoddyl.IntegratedActionModelEuler(
     crocoddyl.DifferentialActionModelFreeFwdDynamics(
         state, actuationModel, runningCostModel, runningConstraints
@@ -182,7 +193,7 @@ solver.termination_tolerance = 1e-3  # Termination criteria (KKT residual)
 solver.max_qp_iters = 1000  # Maximum number of QP iteration
 solver.eps_abs = 1e-5  # QP termination absolute criteria, 1e-9
 solver.eps_rel = 0.0  # QP termination absolute criteria
-solver.use_filter_line_search = True  # True by default, False = use merit function
+solver.use_filter_line_search = True  # True by def, False = use merit function
 # %end_jupyter_snippet
 
 # %jupyter_snippet solve_and_plot
@@ -208,7 +219,6 @@ viz.play([x[: robot.model.nq] for x in solver.xs], TIME_STEP)
 
 # ## TEST ZONE ############################################################
 # ## This last part is to automatically validate the versions of this example.
-import unittest
 
 
 class LocalTest(unittest.TestCase):
