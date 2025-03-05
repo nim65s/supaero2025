@@ -9,10 +9,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import torch.optim as optim
-import tyro
 from stable_baselines3.common.buffers import ReplayBuffer
-from torch.utils.tensorboard import SummaryWriter
 import matplotlib.pylab as plt
 
 # HYPERPARAM
@@ -73,7 +70,7 @@ envs = gym.vector.SyncVectorEnv(
 assert isinstance(envs.single_action_space, gym.spaces.Discrete), "only discrete action space is supported"
 
 q_network = QNetwork(envs)
-optimizer = optim.Adam(q_network.parameters(), lr=LEARNING_RATE)
+optimizer = torch.optim.Adam(q_network.parameters(), lr=LEARNING_RATE)
 target_network = QNetwork(envs)
 target_network.load_state_dict(q_network.state_dict())
 

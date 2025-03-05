@@ -1,18 +1,11 @@
 # docs and experiment results can be found at https://docs.cleanrl.dev/rl-algorithms/ddpg/#ddpg_continuous_actionpy
-import os
 import random
-import time
-from dataclasses import dataclass
-
 import gymnasium as gym
 import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import torch.optim as optim
-import tyro
 from stable_baselines3.common.buffers import ReplayBuffer
-from torch.utils.tensorboard import SummaryWriter
 
 # HYPERPARAM
 SEED = 1
@@ -93,8 +86,8 @@ qf1_target = QNetwork(envs)
 target_actor = Actor(envs)
 target_actor.load_state_dict(actor.state_dict())
 qf1_target.load_state_dict(qf1.state_dict())
-q_optimizer = optim.Adam(list(qf1.parameters()), lr=LEARNING_RATE)
-actor_optimizer = optim.Adam(list(actor.parameters()), lr=LEARNING_RATE)
+q_optimizer = torch.optim.Adam(list(qf1.parameters()), lr=LEARNING_RATE)
+actor_optimizer = torch.optim.Adam(list(actor.parameters()), lr=LEARNING_RATE)
 
 envs.single_observation_space.dtype = np.float32
 rb = ReplayBuffer(
