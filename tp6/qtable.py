@@ -36,7 +36,7 @@ for episode in range(1, NEPISODES):
         u = np.argmax(
             Q[x, :] + np.random.randn(1, env.action_space.n) / episode
         )  # Greedy action with noise
-        x2, reward, done, info = env.step(u)
+        x2, reward, done, trunc, info = env.step(u)
         
         # Compute reference Q-value at state x respecting HJB
         Qref = reward + DECAY_RATE * np.max(Q[x2, :])
@@ -45,7 +45,7 @@ for episode in range(1, NEPISODES):
         Q[x, u] += LEARNING_RATE * (Qref - Q[x, u])
         x = x2
         rsum += reward
-        if done: break
+        if done or trunc: break
 
     h_rwd.append(rsum)
     if not episode % 20:
@@ -76,7 +76,6 @@ plt.ion()
 # ### Plot the learning curve
 print("Total rate of success: %.3f" % (sum(h_rwd) / NEPISODES))
 plt.plot(np.cumsum(h_rwd) / range(1, len(h_rwd)+1))
-plt.show()
 
 # ### Plot Q-Table as value function pos-vs-vel
 def indexes_to_continuous_states(indexes):

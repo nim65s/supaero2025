@@ -3,127 +3,149 @@ Example of Q-table learning with a simple discretized 1-pendulum environment
 using a linear Q network.
 """
 
-import signal
-import time
-
+import gymnasium as gym
 import matplotlib.pyplot as plt
 import numpy as np
-import tensorflow as tf
-import tensorflow.compat.v1 as tf1
-from tp6.env_pendulum import EnvPendulumDiscrete
-
-
-def Env():
-    return EnvPendulumDiscrete(1, viewer="meshcat")
-
-
-tf1.disable_eager_execution()
-
+from myenvs import EnvMountainCarFullyDiscrete
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
 
 ### --- Random seed
-RANDOM_SEED = int((time.time() % 10) * 1000)
+RANDOM_SEED = 1188  # int((time.time()%10)*1000)
 print("Seed = %d" % RANDOM_SEED)
 np.random.seed(RANDOM_SEED)
+torch.manual_seed(RANDOM_SEED)
 
 ### --- Hyper paramaters
-NEPISODES = 2000  # Number of training episodes
+NEPISODES = 20000  # Number of training episodes
 NSTEPS = 50  # Max episode length
-LEARNING_RATE = 0.1  # Step length in optimizer
+LEARNING_RATE = 0.6  # Step length in optimizer
 DECAY_RATE = 0.99  # Discount factor
 
 ### --- Environment
-env = Env()
-NX = env.nx
-NU = env.nu
 
+env = EnvMountainCarFullyDiscrete()#render_mode='human')
 
 ### --- Q-value networks
-class QValueNetwork:
-    def __init__(self):
-        x = tf1.placeholder(shape=[1, NX], dtype=tf.float32)
-        W = tf1.Variable(tf1.random_uniform([NX, NU], 0, 0.01, seed=100))
-        qvalue = tf1.matmul(x, W)
-        u = tf1.argmax(qvalue, 1)
 
-        qref = tf1.placeholder(shape=[1, NU], dtype=tf.float32)
-        loss = tf1.reduce_sum(tf.square(qref - qvalue))
-        optim = tf1.train.GradientDescentOptimizer(LEARNING_RATE).minimize(loss)
+class QValueNetwork(nn.Module):
+    def __init__(self, env, learning_rate=LEARNING_RATE):
+        assert isinstance(env.observation_space,gym.spaces.discrete.Discrete)
+        assert isinstance(env.action_space,gym.spaces.discrete.Discrete)
 
-        self.x = x  # Network input
-        self.qvalue = qvalue  # Q-value as a function of x
-        self.u = u  # Policy  as a function of x
-        self.qref = qref  # Reference Q-value at next step (to be set to l+Q o f)
-        self.optim = optim  # Optimizer
+        super(QValueNetwork, self).__init__()
+        
+        # Linear layer from input size NX to output size NU
+        self.fc = nn.Linear(env.observation_space.n,env.action_space.n)
+        self.optimizer = torch.optim.SGD(self.parameters(), lr=learning_rate)
+    
+    def forward(self, x):
+        qvalue = self.fc(x)
+        return qvalue
+    
+    def predict_action(self, x, noise=0):
+        qvalue = self.forward(x)
+        if noise is not 0:
+            qvalue += torch.randn(qvalue.shape) * noise
+        u = torch.argmax(qvalue,dim=1)
+        return u
+    
+    def update(self, x, qref):
+        self.optimizer.zero_grad()
+        qvalue = self.forward(x)
+        loss = F.mse_loss(qvalue, qref)
+        loss.backward()
+        self.optimizer.step()
+        return loss.item()
 
-
-### --- Tensor flow initialization
-# tf.reset_default_graph()
-qvalue = QValueNetwork()
-sess = tf1.InteractiveSession()
-tf1.global_variables_initializer().run()
-
-
-def onehot(ix, n=NX):
-    """Return a vector which is 0 everywhere except index <i> set to 1."""
-    return np.array(
-        [
-            [(i == ix) for i in range(n)],
-        ],
-        np.float32,
-    )
-
-
-def disturb(u, i):
-    u += int(np.random.randn() * 10 / (i / 50 + 10))
-    return np.clip(u, 0, NU - 1)
-
-
-def rendertrial(maxiter=100):
-    x = env.reset()
-    for i in range(maxiter):
-        u = sess.run(qvalue.u, feed_dict={qvalue.x: onehot(x)})
-        x, r = env.step(u)
-        env.render()
-        if r == 1:
-            print("Reward!")
-            break
+    def plot(self):
+        
+        # ### Plot Q-Table as value function pos-vs-vel
+        def indexes_to_continuous_states(indexes):
+            return [ env.undiscretize_state(env.index_to_discrete_state(s))
+                     for s in indexes if env.is_index_in_range(s) ]
+        Q = self.fc.weight.T
+        fig,axs = plt.subplots(1,2,figsize=(10,5))
+        qvs = indexes_to_continuous_states(range(env.observation_space.n))
+        values = [ float(torch.max(Q[s,:])) for s in range(env.observation_space.n)
+                   if env.is_index_in_range(s) ]
+        vplot = axs[0].scatter([qv[0] for qv in qvs],[qv[1] for qv in qvs],c=values)
+        plt.colorbar(vplot,ax=axs[0])
+        policies = [ int(torch.argmax(Q[s,:])) for s in range(env.observation_space.n)
+                     if env.is_index_in_range(s) ]
+        axs[1].scatter([qv[0] for qv in qvs],[qv[1] for qv in qvs],c=policies)
 
 
-signal.signal(
-    signal.SIGTSTP, lambda x, y: rendertrial()
-)  # Roll-out when CTRL-Z is pressed
+
+    
+qvalue = QValueNetwork(env)
+
+def one_hot(ix, env):
+    """Return a one-hot encoded tensor.
+    
+    - ix: index or batch of indices
+    - n: number of classes (size of the one-hot vector)
+    """
+    ix = torch.tensor(ix).long()
+    if ix.dim() == 0:  # If a single index, add batch dimension
+        ix = ix.unsqueeze(0)
+    return F.one_hot(ix,num_classes=env.observation_space.n).to(torch.float32)
 
 ### --- History of search
 h_rwd = []  # Learning history (for plot).
 
 ### --- Training
 for episode in range(1, NEPISODES):
-    x = env.reset()
+    x, _ = env.reset()
     rsum = 0.0
 
     for step in range(NSTEPS - 1):
-        u = sess.run(qvalue.u, feed_dict={qvalue.x: onehot(x)})[0]  # Greedy policy ...
-        u = disturb(u, episode)  # ... with noise
-        x2, reward = env.step(u)
+
+        u = int(qvalue.predict_action(one_hot(x,env),noise=1/episode))  # ... with noise
+        x2, reward, done, trunc, info = env.step(u)
 
         # Compute reference Q-value at state x respecting HJB
-        Q2 = sess.run(qvalue.qvalue, feed_dict={qvalue.x: onehot(x2)})
-        Qref = sess.run(qvalue.qvalue, feed_dict={qvalue.x: onehot(x)})
-        Qref[0, u] = reward + DECAY_RATE * np.max(Q2)
+        # Q2 = sess.run(qvalue.qvalue, feed_dict={qvalue.x: onhot(x2)})
+        qnext = qvalue(one_hot(x2,env))
+        qref = qvalue(one_hot(x,env))
+        qref[0, u] = reward + DECAY_RATE * torch.max(qnext)
 
         # Update Q-table to better fit HJB
-        sess.run(qvalue.optim, feed_dict={qvalue.x: onehot(x), qvalue.qref: Qref})
-
+        #sess.run(qvalue.optim, feed_dict={qvalue.x: onehot(x), qvalue.qref: Qref})
+        qvalue.update(x=one_hot(x,env),qref=qref)
+        
         rsum += reward
         x = x2
-        if reward == 1:
-            break
+        if done or trunc: break
 
     h_rwd.append(rsum)
     if not episode % 20:
         print("Episode #%d done with %d sucess" % (episode, sum(h_rwd[-20:])))
 
+### DISPLAY
+
+# ### Render a trial
+
+def rendertrial(env,maxiter=100):
+    """Roll-out from random state using greedy policy."""
+    s,_ = env.reset()
+    traj = [s]
+    for i in range(maxiter):
+        a = int(qvalue.predict_action(one_hot(s,env)))
+        s, r, done, trunc, _ = env.step(a)
+        traj.append(s)
+        if done or trunc: break
+    return traj
+
+envrender = EnvMountainCarFullyDiscrete(render_mode = 'human')
+traj = rendertrial(envrender,10)
+
+plt.ion()
+
+# ### Plot the learning curve
 print("Total rate of success: %.3f" % (sum(h_rwd) / NEPISODES))
-rendertrial()
-plt.plot(np.cumsum(h_rwd) / range(1, NEPISODES))
-plt.show()
+plt.plot(np.cumsum(h_rwd) / range(1, len(h_rwd)+1))
+
+# ### Plot Q-Table as value function pos-vs-vel
+qvalue.plot()

@@ -2,7 +2,8 @@ import numpy as np
 import gymnasium as gym
 
 class EnvMountainCarFullyDiscrete(gym.Wrapper):
-    def __init__(self, env, n_bins=(51, 51),**kwargs):
+    def __init__(self, n_bins=(51, 51),**kwargs):
+        env = gym.make("MountainCar-v0",**kwargs).unwrapped
         super().__init__(env)
         self.n_bins = n_bins
         
@@ -70,7 +71,7 @@ class EnvMountainCarFullyDiscrete(gym.Wrapper):
             self.env.state = self.undiscretize_state(next_state_discrete)
             self.discrete_state = next_state_discrete
             self.state = self.discrete_state_to_index(next_state_discrete)
-        return self.state, reward, done, True, info
+        return self.state, reward, done, trunc, info
     
     def reset(self, **kwargs):
         """Réinitialise l'environnement avec un état strictement discret."""
@@ -84,7 +85,6 @@ class EnvMountainCarFullyDiscrete(gym.Wrapper):
 
 
 if __name__ == "__main__":
-    envc = gym.make("MountainCar-v0").unwrapped
-    env = EnvMountainCarFullyDiscrete(envc)
+    env = EnvMountainCarFullyDiscrete()
     env.reset()
     env.step(0)
