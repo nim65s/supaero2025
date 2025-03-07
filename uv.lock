@@ -1,4 +1,5 @@
 version = 1
+revision = 1
 requires-python = ">=3.10"
 
 [[package]]
@@ -1427,6 +1428,36 @@ wheels = [
 ]
 
 [[package]]
+name = "mim-solvers"
+version = "0.0.5"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "cmeel" },
+    { name = "cmeel-boost" },
+    { name = "crocoddyl" },
+    { name = "proxsuite" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/19/17/69ec3dade364a0f82cc723c44644357378ad1e15c0ebb7dee02619c0159d/mim_solvers-0.0.5.tar.gz", hash = "sha256:19ec7c3c33542574d912c1316350ac06b1b03c24791ec3644c93d9c4f27bcecf", size = 924963 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/2b/fc/ee4cc1a7b55ddc66a73aa016a1f78f855b1ff48eb5cf8284a4b74840bab0/mim_solvers-0.0.5-1-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:83dce596f7641cd06f740079547150899645aadb6f4565657576d02b9c853b0b", size = 909638 },
+    { url = "https://files.pythonhosted.org/packages/cf/9f/408cccc6d7712ede23f1afc3f766fe4f4b91df7197a867d3fc5f51e26be7/mim_solvers-0.0.5-1-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:0dc0d681e92c894717f99b50967e2137c5a175112483f25357eb54500d10c0b1", size = 746995 },
+    { url = "https://files.pythonhosted.org/packages/51/51/a0145c30f131ac575c15aa998bc31117af72cccb4b210a98252a970d040c/mim_solvers-0.0.5-1-cp310-cp310-manylinux_2_28_aarch64.whl", hash = "sha256:4166c6805ad242dec2d1e86b9a100b85a6aa731f4021afb5d6b7833b894dd4d1", size = 949688 },
+    { url = "https://files.pythonhosted.org/packages/e7/88/c86175fc6ef6281f6566f4d1f60dc46de40bc5f795741b7cbc6000fc7295/mim_solvers-0.0.5-1-cp310-cp310-manylinux_2_28_x86_64.whl", hash = "sha256:6070285dbc9e0fb70fd70ebcbf81e9c79d9dcaddd98c1d259dff53f8a0080dd3", size = 1017805 },
+    { url = "https://files.pythonhosted.org/packages/86/25/d60043772639ad0f707431cc57818f2e7e7fa2961e1420e2ae078b3f29ec/mim_solvers-0.0.5-1-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:8691d271f89007fd2cf793a1a4c8feb0c54dccfa0d7cc61cd66cc7f37fbd7306", size = 909641 },
+    { url = "https://files.pythonhosted.org/packages/1a/c6/865d01ef5032d08c0342a08de84dbe51d378307a9e21a0041f5ea37ee44e/mim_solvers-0.0.5-1-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:10d8a465d7fbc17fca4382946fddeb8e280fb130b34e17f0f8d82b44ace1bd1f", size = 747005 },
+    { url = "https://files.pythonhosted.org/packages/b2/25/07e1f093203e6a3ee2de97e07e1e81449416aaa37b5fa83935626c18a84f/mim_solvers-0.0.5-1-cp311-cp311-manylinux_2_28_aarch64.whl", hash = "sha256:34a49f69a70054ea7bf7564c52cf2435611a71d45fadaddf03bf9b8dfc3e4188", size = 949464 },
+    { url = "https://files.pythonhosted.org/packages/c6/f6/75ba88e36a2328c8e26dc96fe3b9c5575033385eedbabde8d240362cc946/mim_solvers-0.0.5-1-cp311-cp311-manylinux_2_28_x86_64.whl", hash = "sha256:d965e64f694a817651eafd49f44776aac3f1f17d686003f74bbe5d61428360f6", size = 1017533 },
+    { url = "https://files.pythonhosted.org/packages/a7/11/4f455e13104754e13bc915d1cc7375ae066e1625b5f45b2c978035d8c74b/mim_solvers-0.0.5-1-cp312-cp312-macosx_10_9_x86_64.whl", hash = "sha256:4d8bf6de70a8e29b7e28d183f43cc25911ee6e4d997df3cdac8d723bc6e2d3d6", size = 916304 },
+    { url = "https://files.pythonhosted.org/packages/03/4b/0236bb4e58d45b56af41760bd2bf0a2b9014e861d860c0dd7265bde032b8/mim_solvers-0.0.5-1-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:c064626e39a6cb5662741db21de2ef50f15129bb99c4889b839c1cac1fd3f9e5", size = 748294 },
+    { url = "https://files.pythonhosted.org/packages/98/37/4fd1734322f615868dd7143861ca4ee2757455dbe6ec49959c30cf0ff6fe/mim_solvers-0.0.5-1-cp312-cp312-manylinux_2_28_aarch64.whl", hash = "sha256:0b27ea0819e9d42c087add3cc2296fc495de3cada465c30ba55bf30b7503134f", size = 945341 },
+    { url = "https://files.pythonhosted.org/packages/72/8d/ae64f1ca33c33781361306dbda95757180d74f0510dea2fd5497f210ec73/mim_solvers-0.0.5-1-cp312-cp312-manylinux_2_28_x86_64.whl", hash = "sha256:8ac8a505b8a05d0acfb950e59e5486362efdf8e25b75f867ed847f901151e268", size = 1015964 },
+    { url = "https://files.pythonhosted.org/packages/7b/b1/397963c61ba9ba09b86d4ec751e5d3477a52c61ed96560be17cc5c042dbb/mim_solvers-0.0.5-1-cp313-cp313-macosx_10_9_x86_64.whl", hash = "sha256:41598da8fd784ba7a3fe20f30bde84966a80e77a344416505169959859b4daf3", size = 916313 },
+    { url = "https://files.pythonhosted.org/packages/d1/ea/6e83f2da1665a42ed97db911ffb77b376804aba88529df7fd04494320ca6/mim_solvers-0.0.5-1-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:d77fbac3ef8ea37e647448cc1962731b575da802891efb1222bda9d16901b994", size = 748291 },
+    { url = "https://files.pythonhosted.org/packages/4f/71/ae371df091424f1554af526b512d55cf0e5ad06f142227ec892e542aaee6/mim_solvers-0.0.5-1-cp313-cp313-manylinux_2_28_aarch64.whl", hash = "sha256:e826af6ace71dc1ececae6e3f538b3a8648057caca840d356e2ee07220a3d69e", size = 945342 },
+    { url = "https://files.pythonhosted.org/packages/2d/8b/d4a5684ae3790b5ee4bee511737af0f10cc3f62960c2e60b1e41547ccef7/mim_solvers-0.0.5-1-cp313-cp313-manylinux_2_28_x86_64.whl", hash = "sha256:41fd7c14736041c30fee4a2fb9a7dba14a206a78ca3b633586163942e6b5db46", size = 1015968 },
+]
+
+[[package]]
 name = "mistune"
 version = "3.1.1"
 source = { registry = "https://pypi.org/simple" }
@@ -2318,6 +2349,7 @@ dependencies = [
     { name = "jupyterlab" },
     { name = "matplotlib" },
     { name = "meshcat" },
+    { name = "mim-solvers" },
     { name = "proxsuite" },
     { name = "scipy" },
 ]
@@ -2329,6 +2361,7 @@ requires-dist = [
     { name = "jupyterlab", specifier = ">=4.3.4" },
     { name = "matplotlib", specifier = ">=3.10.0" },
     { name = "meshcat", specifier = ">=0.3.2" },
+    { name = "mim-solvers", specifier = ">=0.0.5" },
     { name = "proxsuite", specifier = ">=0.7.1" },
     { name = "scipy", specifier = ">=1.15.0" },
 ]
