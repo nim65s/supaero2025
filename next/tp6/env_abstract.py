@@ -1,10 +1,12 @@
 """
 Base (abstract) class for environments.
 """
+
 import time
 
 import numpy as np
 import pinocchio as pin
+
 from tp6.discretization import VectorDiscretization
 
 

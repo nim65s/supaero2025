@@ -1,5 +1,6 @@
 # docs and experiment results can be found at https://docs.cleanrl.dev/rl-algorithms/ddpg/#ddpg_continuous_actionpy
 import random
+
 import gymnasium as gym
 import numpy as np
 import torch
@@ -21,6 +22,7 @@ TARGET_NETWORK_FREQUENCY = 2
 TAU = 0.005
 EXPLORATION_NOISE = 0.1
 
+
 def make_env(env_id, seed, idx, capture_video, run_name):
     def thunk():
         if capture_video and idx == 0:
@@ -39,7 +41,11 @@ def make_env(env_id, seed, idx, capture_video, run_name):
 class QNetwork(nn.Module):
     def __init__(self, env):
         super().__init__()
-        self.fc1 = nn.Linear(np.array(env.single_observation_space.shape).prod() + np.prod(env.single_action_space.shape), 256)
+        self.fc1 = nn.Linear(
+            np.array(env.single_observation_space.shape).prod()
+            + np.prod(env.single_action_space.shape),
+            256,
+        )
         self.fc2 = nn.Linear(256, 256)
         self.fc3 = nn.Linear(256, 1)
 
@@ -50,6 +56,7 @@ class QNetwork(nn.Module):
         x = self.fc3(x)
         return x
 
+
 class Actor(nn.Module):
     def __init__(self, env):
         super().__init__()
@@ -58,10 +65,18 @@ class Actor(nn.Module):
         self.fc_mu = nn.Linear(256, np.prod(env.single_action_space.shape))
         # action rescaling
         self.register_buffer(
-            "action_scale", torch.tensor((env.action_space.high - env.action_space.low) / 2.0, dtype=torch.float32)
+            "action_scale",
+            torch.tensor(
+                (env.action_space.high - env.action_space.low) / 2.0,
+                dtype=torch.float32,
+            ),
         )
         self.register_buffer(
-            "action_bias", torch.tensor((env.action_space.high + env.action_space.low) / 2.0, dtype=torch.float32)
+            "action_bias",
+            torch.tensor(
+                (env.action_space.high + env.action_space.low) / 2.0,
+                dtype=torch.float32,
+            ),
         )
 
     def forward(self, x):
@@ -78,7 +93,9 @@ torch.manual_seed(SEED)
 
 # env setup
 envs = gym.vector.SyncVectorEnv([make_env(ENV_ID, SEED, 0, False, "TP6")])
-assert isinstance(envs.single_action_space, gym.spaces.Box), "only continuous action space is supported"
+assert isinstance(
+    envs.single_action_space, gym.spaces.Box
+), "only continuous action space is supported"
 
 actor = Actor(envs)
 qf1 = QNetwork(envs)
@@ -104,14 +121,17 @@ h_rwd = []
 
 for global_step in range(TOTAL_TIMESTEPS):
     # ALGO LOGIC: put action logic here
-    if global_step < TOTAL_TIMESTEPS//40:
-        actions = np.array([envs.single_action_space.sample() for _ in range(envs.num_envs)])
+    if global_step < TOTAL_TIMESTEPS // 40:
+        actions = np.array(
+            [envs.single_action_space.sample() for _ in range(envs.num_envs)]
+        )
     else:
         with torch.no_grad():
             actions = actor(torch.Tensor(obs))
             actions += torch.normal(0, actor.action_scale * EXPLORATION_NOISE)
-            actions = actions.numpy().clip(envs.single_action_space.low,
-                                           envs.single_action_space.high)
+            actions = actions.numpy().clip(
+                envs.single_action_space.low, envs.single_action_space.high
+            )
 
     # execute the game
     next_obs, rewards, terminations, truncations, infos = envs.step(actions)
@@ -120,7 +140,7 @@ for global_step in range(TOTAL_TIMESTEPS):
     if "final_info" in infos:
         for info in infos["final_info"]:
             print(f"global_step={global_step}, episodic_return={info['episode']['r']}")
-            h_rwd.append(info['episode']['r'])
+            h_rwd.append(info["episode"]["r"])
 
     # save data to replay buffer; handle `final_observation`
     real_next_obs = next_obs.copy()
@@ -138,8 +158,9 @@ for global_step in range(TOTAL_TIMESTEPS):
         with torch.no_grad():
             next_state_actions = target_actor(data.next_observations)
             qf1_next_target = qf1_target(data.next_observations, next_state_actions)
-            next_q_value = data.rewards.flatten() \
-                + (1 - data.dones.flatten()) * GAMMA * (qf1_next_target).view(-1)
+            next_q_value = data.rewards.flatten() + (
+                1 - data.dones.flatten()
+            ) * GAMMA * (qf1_next_target).view(-1)
 
         qf1_a_values = qf1(data.observations, data.actions).view(-1)
         qf1_loss = F.mse_loss(qf1_a_values, next_q_value)
@@ -157,9 +178,15 @@ for global_step in range(TOTAL_TIMESTEPS):
 
         # update the target network
         if global_step % TARGET_NETWORK_FREQUENCY == 0:
-            for param, target_param in zip(actor.parameters(), target_actor.parameters()):
-                target_param.data.copy_(TAU * param.data + (1 - TAU) * target_param.data)
+            for param, target_param in zip(
+                actor.parameters(), target_actor.parameters()
+            ):
+                target_param.data.copy_(
+                    TAU * param.data + (1 - TAU) * target_param.data
+                )
             for param, target_param in zip(qf1.parameters(), qf1_target.parameters()):
-                target_param.data.copy_(TAU * param.data + (1 - TAU) * target_param.data)
+                target_param.data.copy_(
+                    TAU * param.data + (1 - TAU) * target_param.data
+                )
 
 envs.close()

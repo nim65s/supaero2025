@@ -17,6 +17,7 @@ control NU=11 discrete, Euler step DT=0.5 low friction
 
 import numpy as np
 import pinocchio as pin
+
 import tp6.env_abstract as env_abstract
 from tp6.env_abstract import EnvPinocchio
 from tp6.models.pendulum import createPendulum

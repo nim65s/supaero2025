@@ -8,6 +8,7 @@ import signal
 
 import matplotlib.pyplot as plt
 import numpy as np
+
 from tp6.env_pendulum import EnvPendulumDiscrete
 
 ### --- Random seed
